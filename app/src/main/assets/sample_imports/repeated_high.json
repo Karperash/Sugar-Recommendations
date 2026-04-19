@@ -1,0 +1,30 @@
+[
+  {
+    "timestamp": "2026-03-25T06:00:00Z",
+    "glucoseValue": 145,
+    "unit": "MG_DL",
+    "trendDirection": "UP",
+    "meal": false
+  },
+  {
+    "timestamp": "2026-03-25T08:00:00Z",
+    "glucoseValue": 182,
+    "unit": "MG_DL",
+    "trendDirection": "UP",
+    "meal": true
+  },
+  {
+    "timestamp": "2026-03-25T10:00:00Z",
+    "glucoseValue": 194,
+    "unit": "MG_DL",
+    "trendDirection": "FLAT",
+    "meal": false
+  },
+  {
+    "timestamp": "2026-03-25T12:00:00Z",
+    "glucoseValue": 176,
+    "unit": "MG_DL",
+    "trendDirection": "DOWN",
+    "meal": false
+  }
+]

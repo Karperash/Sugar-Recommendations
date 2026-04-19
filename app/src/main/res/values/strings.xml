@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">DiaGuide CGM</string>
+
+    <!-- Splash -->
+    <string name="splash_title">DiaGuide CGM</string>
+    <string name="splash_subtitle">Loading local profile and settings</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Initial setup</string>
+    <string name="onboarding_intro">This research prototype uses editable user-defined glucose thresholds. Medical fields are optional and can be changed later.</string>
+    <string name="onboarding_name_label">Name or nickname</string>
+    <string name="onboarding_diabetes_type_label">Diabetes type (optional)</string>
+    <string name="onboarding_age_group_label">Age group (optional)</string>
+    <string name="onboarding_unit_label">Unit</string>
+    <string name="onboarding_disclaimer_text">I understand that this prototype is not a medical device and does not provide diagnosis or insulin dosing.</string>
+    <string name="onboarding_error">Fill numeric thresholds and accept the disclaimer to continue.</string>
+    <string name="onboarding_continue">Continue</string>
+
+    <!-- Threshold labels (shared between onboarding and settings) -->
+    <string name="threshold_target_low">Target low</string>
+    <string name="threshold_target_high">Target high</string>
+    <string name="threshold_warning_low">Warning low</string>
+    <string name="threshold_warning_high">Warning high</string>
+    <string name="threshold_critical_low">Critical low</string>
+    <string name="threshold_critical_high">Critical high</string>
+    <string name="threshold_rapid_rise">Rapid rise per 15 min</string>
+    <string name="threshold_rapid_fall">Rapid fall per 15 min</string>
+    <string name="threshold_prolonged_minutes">Prolonged minutes</string>
+    <string name="threshold_pattern_window_hours">Pattern window hours</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_refresh">Refresh</string>
+    <string name="dashboard_version">v%1$s</string>
+    <string name="dashboard_current_glucose">Current glucose</string>
+    <string name="dashboard_no_readings">No readings yet. Add a manual entry or import data.</string>
+    <string name="dashboard_today_summary">Today\'s summary</string>
+    <string name="dashboard_min">Min: %1$s</string>
+    <string name="dashboard_max">Max: %1$s</string>
+    <string name="dashboard_average">Average: %1$s</string>
+    <string name="dashboard_time_in_target">Time in target: %1$s%%</string>
+    <string name="dashboard_active_recommendations">Active recommendations</string>
+    <string name="dashboard_no_recommendations">No active recommendations for today.</string>
+    <string name="dashboard_add_entry">Add entry</string>
+    <string name="dashboard_import_file">Import file</string>
+    <string name="dashboard_open_chart">Open chart</string>
+    <string name="dashboard_recommendations">Recommendations</string>
+    <string name="dashboard_event_log">Event log</string>
+    <string name="dashboard_disclaimer">Educational disclaimer: this app does not diagnose disease and does not calculate insulin doses. In urgent situations, contact a clinician or emergency services.</string>
+    <string name="status_critical">Critical</string>
+    <string name="status_out_of_range">Out of range</string>
+    <string name="status_in_target">In target</string>
+
+    <!-- Chart -->
+    <string name="chart_title">CGM chart</string>
+    <string name="chart_glucose_over_time">Glucose over time</string>
+    <string name="chart_no_data">No data available in the selected time interval.</string>
+    <string name="chart_latest_point">Latest point: %1$s</string>
+    <string name="chart_event_markers_title">Event markers</string>
+    <string name="chart_event_markers_blue">Blue markers represent tagged records such as meal, activity, insulin, or symptoms.</string>
+    <string name="chart_event_markers_amber">Amber markers indicate out-of-range values. Red markers indicate critical thresholds.</string>
+    <string name="chart_range_today">Today</string>
+    <string name="chart_range_3days">3 days</string>
+    <string name="chart_range_7days">7 days</string>
+
+    <!-- History -->
+    <string name="history_title">History</string>
+    <string name="history_no_readings">No readings stored yet.</string>
+    <string name="history_source">Source: %1$s</string>
+    <string name="history_note">Note: %1$s</string>
+    <string name="history_tags">Tags: %1$s</string>
+    <string name="tag_meal">meal</string>
+    <string name="tag_insulin">insulin</string>
+    <string name="tag_activity">activity</string>
+    <string name="tag_sleep">sleep</string>
+    <string name="tag_stress">stress</string>
+    <string name="tag_symptom">symptom</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_title">Recommendations</string>
+    <string name="recommendations_empty">No recommendations generated yet.</string>
+    <string name="recommendations_pattern">Pattern: %1$s</string>
+
+    <!-- Events -->
+    <string name="events_title">Event log</string>
+    <string name="events_empty">No events logged yet.</string>
+    <string name="events_type">Type: %1$s</string>
+
+    <!-- Manual Entry -->
+    <string name="manual_title">Manual entry</string>
+    <string name="manual_glucose_value">Glucose value</string>
+    <string name="manual_trend_label">Trend</string>
+    <string name="manual_note_label">Note</string>
+    <string name="manual_tags_title">Tags</string>
+    <string name="manual_tag_meal">Meal</string>
+    <string name="manual_tag_insulin">Insulin</string>
+    <string name="manual_tag_activity">Activity</string>
+    <string name="manual_tag_sleep">Sleep</string>
+    <string name="manual_tag_stress">Stress</string>
+    <string name="manual_tag_symptom">Symptom</string>
+    <string name="manual_save">Save entry</string>
+    <string name="manual_error_invalid_value">Enter a valid glucose value.</string>
+
+    <!-- Import -->
+    <string name="import_title">Import data</string>
+    <string name="import_description">Import CGM-like records from a local file.</string>
+    <string name="import_csv">Import CSV</string>
+    <string name="import_json">Import JSON</string>
+    <string name="import_synthetic_title">Synthetic test scenarios</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_name_label">Name or nickname</string>
+    <string name="settings_diabetes_type_label">Diabetes type (optional)</string>
+    <string name="settings_age_group_label">Age group (optional)</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_russian">Russian</string>
+    <string name="settings_glucose_unit">Glucose unit</string>
+    <string name="settings_reminders">Reminders</string>
+    <string name="settings_reminder_interval">Reminder interval (hours, 0 = off)</string>
+    <string name="settings_save">Save settings</string>
+    <string name="settings_saved">Settings saved.</string>
+    <string name="settings_open_disclaimer">Open disclaimer</string>
+
+    <!-- About -->
+    <string name="about_title">About and disclaimer</string>
+    <string name="about_research_prototype">Research prototype</string>
+    <string name="about_description">DiaGuide CGM is a master\'s thesis prototype designed to analyze CGM-like data and generate explainable rule-based informational recommendations.</string>
+    <string name="about_safety_title">Safety disclaimer</string>
+    <string name="about_not_medical_device">This application is not a certified medical device.</string>
+    <string name="about_no_diagnosis">It does not diagnose diabetes-related conditions.</string>
+    <string name="about_no_insulin">It does not calculate insulin doses or prescribe treatment.</string>
+    <string name="about_thresholds">All thresholds are user-editable and intended for demonstration and research use.</string>
+    <string name="about_emergency">If symptoms are severe or values are dangerous, contact a clinician or emergency services.</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_chart">Chart</string>
+    <string name="nav_history">History</string>
+    <string name="nav_recommendations">Recommendations</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Notifications -->
+    <string name="reminder_notification_text">Time to check your glucose level</string>
+</resources>

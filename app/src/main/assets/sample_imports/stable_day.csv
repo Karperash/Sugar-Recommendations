@@ -1,0 +1,6 @@
+timestamp,glucoseValue,unit,trendDirection,source,note,meal,insulin,activity,sleep,stress,symptom
+2026-03-25T06:00:00Z,101,MG_DL,FLAT,CSV_IMPORT,Stable morning,false,false,false,true,false,false
+2026-03-25T08:00:00Z,108,MG_DL,UP,CSV_IMPORT,After breakfast,true,false,false,false,false,false
+2026-03-25T10:00:00Z,112,MG_DL,FLAT,CSV_IMPORT,,false,false,true,false,false,false
+2026-03-25T12:00:00Z,109,MG_DL,DOWN,CSV_IMPORT,,false,false,false,false,false,false
+2026-03-25T14:00:00Z,115,MG_DL,UP,CSV_IMPORT,,true,false,false,false,false,false
