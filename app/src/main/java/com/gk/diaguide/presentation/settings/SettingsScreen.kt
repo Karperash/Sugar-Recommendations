@@ -2,6 +2,7 @@ package com.gk.diaguide.presentation.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -21,17 +23,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gk.diaguide.R
+import com.gk.diaguide.core.util.shortLabelRu
 import com.gk.diaguide.domain.model.GlucoseUnit
 import com.gk.diaguide.navigation.AppDestination
+import com.gk.diaguide.presentation.onboarding.OnboardingScreen
+import com.gk.diaguide.presentation.onboarding.OnboardingUiState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(
+    settingsIntroCompleted: Boolean,
+    introState: OnboardingUiState,
+    onIntroUpdate: ((OnboardingUiState) -> OnboardingUiState) -> Unit,
+    onCompleteIntro: () -> Unit,
     state: SettingsUiState,
     onUpdate: ((SettingsUiState) -> SettingsUiState) -> Unit,
     onSave: () -> Unit,
     onNavigate: (AppDestination) -> Unit,
+    onApplyZenodoPreset: () -> Unit,
+    onApplyOhioPreset: () -> Unit,
 ) {
+    if (!settingsIntroCompleted) {
+        Box(Modifier.fillMaxSize()) {
+            OnboardingScreen(
+                state = introState,
+                onUpdate = onIntroUpdate,
+                onSave = onCompleteIntro,
+                showScaffold = true,
+            )
+        }
+        return
+    }
+
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) }) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
@@ -54,34 +77,23 @@ fun SettingsScreen(
                 label = { Text(stringResource(R.string.settings_age_group_label)) },
             )
 
-            Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = state.appLanguageTag.isEmpty(),
-                    onClick = { onUpdate { it.copy(appLanguageTag = "") } },
-                    label = { Text(stringResource(R.string.settings_language_system)) },
-                )
-                FilterChip(
-                    selected = state.appLanguageTag == "en",
-                    onClick = { onUpdate { it.copy(appLanguageTag = "en") } },
-                    label = { Text(stringResource(R.string.settings_language_english)) },
-                )
-                FilterChip(
-                    selected = state.appLanguageTag == "ru",
-                    onClick = { onUpdate { it.copy(appLanguageTag = "ru") } },
-                    label = { Text(stringResource(R.string.settings_language_russian)) },
-                )
-            }
-
             Text(stringResource(R.string.settings_glucose_unit))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 GlucoseUnit.entries.forEach { unit ->
                     FilterChip(
                         selected = unit == state.unit,
                         onClick = { onUpdate { it.copy(unit = unit) } },
-                        label = { Text(unit.name) },
+                        label = { Text(unit.shortLabelRu()) },
                     )
                 }
+            }
+
+            Text(stringResource(R.string.settings_reco_presets), style = MaterialTheme.typography.titleMedium)
+            OutlinedButton(onClick = onApplyZenodoPreset) {
+                Text(stringResource(R.string.settings_preset_zenodo))
+            }
+            OutlinedButton(onClick = onApplyOhioPreset) {
+                Text(stringResource(R.string.settings_preset_ohio))
             }
 
             SettingField(stringResource(R.string.threshold_target_low), state.targetLow) { value -> onUpdate { it.copy(targetLow = value) } }

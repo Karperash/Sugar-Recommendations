@@ -1,12 +1,8 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#5D7E9A"
-        android:pathData="M54,18c13.3,0 24,10.7 24,24c0,17 -24,48 -24,48S30,59 30,42c0,-13.3 10.7,-24 24,-24z" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M55,34c6.1,0 11,4.9 11,11s-4.9,11 -11,11s-11,-4.9 -11,-11s4.9,-11 11,-11z" />
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Внешний вид иконки: центрирование в безопасной зоне adaptive icon (108dp) -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_launcher_mascot"
+    android:insetLeft="10dp"
+    android:insetTop="10dp"
+    android:insetRight="10dp"
+    android:insetBottom="10dp" />

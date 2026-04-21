@@ -38,10 +38,9 @@ fun OnboardingScreen(
     state: OnboardingUiState,
     onUpdate: ((OnboardingUiState) -> OnboardingUiState) -> Unit,
     onSave: () -> Unit,
+    showScaffold: Boolean = true,
 ) {
-    Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.onboarding_title)) }) },
-    ) { padding ->
+    val content: @Composable (PaddingValues) -> Unit = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -59,12 +58,12 @@ fun OnboardingScreen(
             )
             OutlinedTextField(
                 value = state.diabetesType,
-                onValueChange = { onUpdate { current -> current.copy(diabetesType = it) } },
+                onValueChange = { value -> onUpdate { it.copy(diabetesType = value) } },
                 label = { Text(stringResource(R.string.onboarding_diabetes_type_label)) },
             )
             OutlinedTextField(
                 value = state.ageGroup,
-                onValueChange = { onUpdate { current -> current.copy(ageGroup = it) } },
+                onValueChange = { value -> onUpdate { it.copy(ageGroup = value) } },
                 label = { Text(stringResource(R.string.onboarding_age_group_label)) },
             )
             UnitSelector(
@@ -99,6 +98,13 @@ fun OnboardingScreen(
             }
         }
     }
+    if (showScaffold) {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text(stringResource(R.string.onboarding_title)) }) },
+        ) { padding -> content(padding) }
+    } else {
+        content(PaddingValues(0.dp))
+    }
 }
 
 @Composable
@@ -123,7 +129,12 @@ private fun UnitSelector(
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
-            value = selected.name,
+            value = stringResource(
+                when (selected) {
+                    GlucoseUnit.MG_DL -> R.string.unit_mg_dl
+                    GlucoseUnit.MMOL_L -> R.string.unit_mmol_l
+                },
+            ),
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.onboarding_unit_label)) },
@@ -134,7 +145,16 @@ private fun UnitSelector(
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             GlucoseUnit.entries.forEach { unit ->
                 DropdownMenuItem(
-                    text = { Text(unit.name) },
+                    text = {
+                        Text(
+                            stringResource(
+                                when (unit) {
+                                    GlucoseUnit.MG_DL -> R.string.unit_mg_dl
+                                    GlucoseUnit.MMOL_L -> R.string.unit_mmol_l
+                                },
+                            ),
+                        )
+                    },
                     onClick = {
                         onSelected(unit)
                         expanded = false

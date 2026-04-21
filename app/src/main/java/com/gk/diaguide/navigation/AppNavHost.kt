@@ -12,15 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.gk.diaguide.core.ui.AppBottomBar
 import com.gk.diaguide.presentation.about.AboutScreen
@@ -36,14 +32,11 @@ import com.gk.diaguide.presentation.imports.ImportScreen
 import com.gk.diaguide.presentation.imports.ImportViewModel
 import com.gk.diaguide.presentation.manual.ManualEntryScreen
 import com.gk.diaguide.presentation.manual.ManualEntryViewModel
-import com.gk.diaguide.presentation.onboarding.OnboardingScreen
-import com.gk.diaguide.presentation.onboarding.OnboardingViewModel
 import com.gk.diaguide.presentation.recommendations.RecommendationsScreen
 import com.gk.diaguide.presentation.recommendations.RecommendationsViewModel
 import com.gk.diaguide.presentation.settings.SettingsScreen
 import com.gk.diaguide.presentation.settings.SettingsViewModel
 import com.gk.diaguide.presentation.splash.SplashScreen
-import com.gk.diaguide.presentation.splash.SplashViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +54,6 @@ fun AppNavHost() {
         AppDestination.Import,
         AppDestination.EventLog,
         AppDestination.About,
-        AppDestination.Onboarding,
         AppDestination.Splash,
     ).firstOrNull { it.route == currentRoute }
 
@@ -87,30 +79,12 @@ fun AppNavHost() {
             popExitTransition = { fadeOut(animationSpec = tween(300)) },
         ) {
             composable(AppDestination.Splash.route) {
-                val viewModel: SplashViewModel = hiltViewModel()
-                val completed by viewModel.onboardingCompleted.collectAsStateWithLifecycle()
-                LaunchedEffect(completed) {
-                    navController.navigate(if (completed) AppDestination.Dashboard.route else AppDestination.Onboarding.route) {
+                LaunchedEffect(Unit) {
+                    navController.navigate(AppDestination.Dashboard.route) {
                         popUpTo(AppDestination.Splash.route) { inclusive = true }
                     }
                 }
                 SplashScreen()
-            }
-
-            composable(AppDestination.Onboarding.route) {
-                val viewModel: OnboardingViewModel = hiltViewModel()
-                LaunchedEffect(Unit) {
-                    viewModel.completed.collectLatest {
-                        navController.navigate(AppDestination.Dashboard.route) {
-                            popUpTo(AppDestination.Onboarding.route) { inclusive = true }
-                        }
-                    }
-                }
-                OnboardingScreen(
-                    state = viewModel.uiState,
-                    onUpdate = viewModel::update,
-                    onSave = viewModel::save,
-                )
             }
 
             composable(AppDestination.Dashboard.route) {
@@ -192,10 +166,16 @@ fun AppNavHost() {
             composable(AppDestination.Settings.route) {
                 val viewModel: SettingsViewModel = hiltViewModel()
                 SettingsScreen(
+                    settingsIntroCompleted = viewModel.settingsIntroCompleted,
+                    introState = viewModel.introUiState,
+                    onIntroUpdate = viewModel::updateIntro,
+                    onCompleteIntro = viewModel::completeFirstTimeIntro,
                     state = viewModel.uiState,
                     onUpdate = viewModel::update,
                     onSave = viewModel::save,
                     onNavigate = { navController.navigate(it.route) },
+                    onApplyZenodoPreset = viewModel::applyZenodoT1dUomPreset,
+                    onApplyOhioPreset = viewModel::applyOhioResearchPreset,
                 )
             }
 

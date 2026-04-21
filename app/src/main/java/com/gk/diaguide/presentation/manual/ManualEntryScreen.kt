@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gk.diaguide.R
+import com.gk.diaguide.core.ui.trendDirectionLabel
 import com.gk.diaguide.domain.model.TrendDirection
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -96,7 +97,7 @@ private fun TrendSelector(
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
-            value = selected.name,
+            value = trendDirectionLabel(selected),
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.manual_trend_label)) },
@@ -107,7 +108,7 @@ private fun TrendSelector(
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             TrendDirection.entries.forEach { direction ->
                 DropdownMenuItem(
-                    text = { Text(direction.name) },
+                    text = { Text(trendDirectionLabel(direction)) },
                     onClick = {
                         onSelected(direction)
                         expanded = false

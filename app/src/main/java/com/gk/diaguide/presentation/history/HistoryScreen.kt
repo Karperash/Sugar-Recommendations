@@ -15,8 +15,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.ui.unit.dp
 import com.gk.diaguide.R
+import com.gk.diaguide.core.ui.Dimens
+import com.gk.diaguide.core.ui.entrySourceLabel
+import com.gk.diaguide.core.ui.EmptyState
 import com.gk.diaguide.core.util.asArrow
 import com.gk.diaguide.core.util.formatDateTime
 import com.gk.diaguide.core.util.formatGlucose
@@ -28,18 +33,25 @@ import com.gk.diaguide.domain.model.GlucoseUnit
 fun HistoryScreen(records: List<CgmRecord>) {
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.history_title)) }) }) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.screenPadding),
+            verticalArrangement = Arrangement.spacedBy(Dimens.itemSpacing),
         ) {
             if (records.isEmpty()) {
-                item { Text(stringResource(R.string.history_no_readings)) }
+                item {
+                    EmptyState(
+                        title = stringResource(R.string.empty_state_history_title),
+                        message = stringResource(R.string.history_no_readings),
+                        icon = Icons.Outlined.History,
+                        contentDescription = null,
+                    )
+                }
             }
             items(records) { record ->
                 Card {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Column(modifier = Modifier.padding(Dimens.cardPadding), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(record.timestamp.formatDateTime(), style = MaterialTheme.typography.titleSmall)
                         Text("${record.glucoseValue.formatGlucose(record.unit)} ${record.trendDirection.asArrow()}")
-                        Text(stringResource(R.string.history_source, record.source.name))
+                        Text(stringResource(R.string.history_source, entrySourceLabel(record.source)))
                         if (!record.note.isNullOrBlank()) {
                             Text(stringResource(R.string.history_note, record.note!!))
                         }

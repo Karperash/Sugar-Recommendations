@@ -16,8 +16,10 @@ data class UserSettings(
     val prolongedOutOfRangeMinutes: Long = 45,
     val patternWindowHours: Long = 24,
     val reminderIntervalHours: Long = 0,
-    /** BCP 47 tag, e.g. "en", "ru". Empty = follow system locale. */
-    val appLanguageTag: String = "",
+    /** Интерфейс только на русском (РФ). */
+    val appLanguageTag: String = "ru",
     val onboardingCompleted: Boolean = false,
     val disclaimerAccepted: Boolean = false,
+    /** Первичная анкета пройдена (раньше — полноэкранный онбординг; теперь — из «Настроек»). */
+    val settingsIntroCompleted: Boolean = false,
 )

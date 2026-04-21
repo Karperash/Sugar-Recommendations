@@ -52,7 +52,13 @@ class DashboardViewModelTest {
     }
 
     private class FakeSettingsRepository : SettingsRepository {
-        private val flow = MutableStateFlow(UserSettings(onboardingCompleted = true, disclaimerAccepted = true))
+        private val flow = MutableStateFlow(
+            UserSettings(
+                onboardingCompleted = true,
+                disclaimerAccepted = true,
+                settingsIntroCompleted = true,
+            ),
+        )
         override fun observeSettings(): Flow<UserSettings> = flow
         override suspend fun saveProfile(displayName: String, diabetesType: String, ageGroup: String) = Unit
         override suspend fun saveThresholds(settings: UserSettings) {

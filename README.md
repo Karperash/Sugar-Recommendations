@@ -1,95 +1,172 @@
-# DiaGuide CGM — Android prototype for a master's thesis
+# DiaGuide CGM
 
-DiaGuide CGM is a Jetpack Compose Android prototype of a rule-based recommendation system for people living with diabetes.
-The application is intended for research and educational use in a master's thesis. It ingests CGM-like data, visualizes glucose trends,
-detects simple explainable patterns, and generates informational recommendations without performing diagnosis or insulin dose calculation.
+**DiaGuide CGM** — прототип Android-приложения на Kotlin (Jetpack Compose) для исследовательского и учебного использования (в т.ч. магистерская диссертация). Приложение принимает данные в формате CGM-подобных рядов, визуализирует динамику глюкозы, обнаруживает настраиваемые пользователем паттерны и формирует **информационные** рекомендации на основе правил. **Не** выполняет диагноз, **не** рассчитывает дозы инсулина и **не** заменяет медицинское изделие.
 
-## Key capabilities
+**Репозиторий:** [github.com/Karperash/Sugar-Recommendations](https://github.com/Karperash/Sugar-Recommendations)
 
-- onboarding with editable glucose target range and alert thresholds
-- manual glucose entry
-- CGM import from CSV and JSON
-- synthetic demo scenarios for testing
-- local persistence with Room
-- settings persistence with Preferences DataStore
-- transparent rule-based CGM analysis
-- recommendation history and event log
-- chart visualization via Compose Canvas
-- unit tests for parsers, analysis rules, recommendation rules, and a ViewModel
+---
 
-## Medical safety boundary
+## Основные возможности
 
-This prototype is **not** a certified medical device.
-It does **not** diagnose, prescribe treatment, or calculate insulin doses.
-Recommendations are cautious informational prompts only.
-If the user experiences severe symptoms or dangerous glucose states, they must contact a clinician or emergency services.
+- **Главный экран:** последнее значение глюкозы, мини-график, сводка за день, активные рекомендации, быстрые действия; прокрутка контента; временные кнопки ▲/▼ для прокрутки (удобство в эмуляторе).
+- **Первичная настройка порогов** показывается **при первом открытии раздела «Настройки»**, а не при каждом холодном старте приложения (форма с отказом от ответственности и числовыми порогами).
+- **Ручной ввод** записей CGM с тегами и трендом.
+- **Импорт CSV и JSON** в формате приложения; **синтетические сценарии** для тестов.
+- **График, история, рекомендации, журнал событий.**
+- **Настройки:** профиль, единицы (мг/дл / ммоль/л), пороги, напоминания; пресеты под датасеты **Zenodo T1D-UOM** и **OhioT1DM** (исследовательские ориентиры).
+- **Локальное хранение:** Room, DataStore.
+- **Правила анализа** (движок в `domain`) и генерация текстов рекомендаций; отображение заголовков/текстов на русском через строковые ресурсы.
+- **Интерфейс на русском** (РФ): единый `values/strings.xml`, `locales_config` только `ru`, локаль приложения `ru` при старте.
+- **Иконка приложения:** adaptive icon с маскотом (растровый слой + фон), уведомления используют тот же передний план.
+- **CI:** GitHub Actions — сборка и тесты (см. `.github/workflows/android-ci.yml`).
+- **Юнит-тесты:** парсеры, движок анализа, рекомендации, ViewModel.
 
-## Tech stack
+---
 
-- Kotlin
-- Android Studio / Gradle
-- Jetpack Compose
-- MVVM + Clean Architecture + Repository pattern
-- Hilt
-- Room
-- DataStore
-- Coroutines + Flow
+## Подробный журнал изменений (актуальная версия)
+
+### Версия 1.3.0 (versionCode 7)
+
+| Область | Изменения |
+|--------|-----------|
+| **Локализация** | Интерфейс только на русском; удалена отдельная `values-ru`; строки и комментарии в `strings.xml` с русскими пояснениями секций. |
+| **Локаль приложения** | `locales_config` — только `ru`; при старте `DiaGuideApplication` выставляется `ru`; язык в DataStore фиксируется как `ru`. |
+| **Навигация** | Splash всегда ведёт на главный экран; полноэкранный онбординг убран из холодного старта. |
+| **Первичная анкета** | Флаг `settingsIntroCompleted` в DataStore; миграция для пользователей, уже прошедших старый онбординг; форма «Начальная настройка» при первом заходе в «Настройки». |
+| **Рекомендации и UI** | Пресеты порогов Zenodo/Ohio; русские подписи единиц, источников записей, типов событий, трендов, сценариев импорта; `EnumLocalizations` / `ScenarioLocalizations`. |
+| **Данные** | Папки `data/zenodo/raw`, `data/ohio/raw` в `.gitignore`; скрипты `scripts/t1d_uom_glucose_to_diaguide_csv.py`, `ohio_xml_to_diaguide_csv.py`. |
+| **Главный экран** | Вертикальная прокрутка; временные кнопки прокрутки вправо. |
+| **Иконка** | `drawable-nodpi/ic_launcher_mascot.png`, `ic_launcher_foreground.xml` как inset; фон `#BFE8DD`. |
+| **Прочее** | Удалён неиспользуемый `SplashViewModel`; обновлены тесты и README. |
+
+Ранее зафиксированные версии см. в файле **`VERSION_HISTORY.txt`**.
+
+---
+
+## Медицинская и правовая оговорка
+
+Прототип **не** является зарегистрированным медицинским изделием. Он **не** ставит диагноз, **не** назначает лечение и **не** вычисляет дозы инсулина. Рекомендации носят **ознакомительный** характер. При ухудшении состояния, тяжёлых симптомах или опасных значениях глюкозы необходимо обратиться к врачу или в экстренные службы.
+
+---
+
+## Технологии
+
+- Kotlin, Android Studio, Gradle (JDK 17)
+- Jetpack Compose, Material 3
+- Архитектура: MVVM, Clean Architecture, репозитории
+- Hilt (DI), Room, DataStore Preferences
+- Kotlin Coroutines, Flow
 - Navigation Compose
+- AppCompat / локаль через `AppCompatDelegate` (приложение принудительно `ru`)
 
-## Open in Android Studio
+---
 
-1. Install Android Studio with JDK 17.
-2. Open the project folder.
-3. Let Gradle sync the project.
-4. Run the `app` configuration on an emulator or a device with Android 8.0+.
+## Сборка и запуск
 
-## Build assumptions
+1. Установите **Android Studio** с **JDK 17**.
+2. Откройте каталог проекта.
+3. Дождитесь синхронизации Gradle.
+4. Запустите конфигурацию **`app`** на эмуляторе или устройстве с **Android 8.0+** (minSdk 26).
 
-- minSdk = 26
-- compileSdk = 36
-- targetSdk = 36
-- AGP = 8.10.1
-- Kotlin = 2.2.20
-- Compose BOM = 2026.03.00
+### Параметры сборки (ориентиры)
 
-## Demo data
+| Параметр | Значение |
+|----------|----------|
+| minSdk | 26 |
+| compileSdk / targetSdk | 36 |
+| Kotlin | 2.2.20 |
+| Compose BOM | 2026.03.00 |
+| AGP | 8.10.1 |
 
-The project includes:
-- in-app synthetic scenarios:
-  - stable day
-  - repeated high glucose
-  - repeated low glucose
-  - sharp fluctuations
-  - night episodes
-- sample import files in `app/src/main/assets/sample_imports/`
+Точные версии см. в `gradle/libs.versions.toml` и `app/build.gradle.kts`.
 
-## Main architecture
+---
+
+## Данные для исследований
+
+### Zenodo — T1D-UOM (основной открытый источник)
+
+- Публичный датасет (**CC BY 4.0**), DOI: **[10.5281/zenodo.15169263](https://doi.org/10.5281/zenodo.15169263)**.
+- Описание колонок: репозиторий [ManchesterCSCoordinatedDiabetesStudy](https://github.com/sharpic/ManchesterCSCoordinatedDiabetesStudy) (глюкоза: `bg_ts`, `value` в ммоль/л).
+- Распакуйте архив в `data/zenodo/raw/` (большие файлы в Git не коммитятся).
+- Конвертация в CSV для импорта в приложение:
+
+```bash
+python scripts/t1d_uom_glucose_to_diaguide_csv.py "data/zenodo/raw/Dataset/Glucose Data/UoMGlucose01.csv" -o app/src/main/assets/sample_imports/uom_glucose_01.csv
+```
+
+В настройках включите **ммоль/л**, примените пресет **«Профиль Zenodo T1D-UOM»** и сохраните.
+
+### OhioT1DM (опционально, по согласованию с авторами)
+
+- Доступ по запросу: [страница набора OhioT1DM](https://webpages.charlotte.edu/rbunescu/data/ohiot1dm/OhioT1DM-dataset.html).
+- XML кладите в `data/ohio/raw/`, конвертация:
+
+```bash
+python scripts/ohio_xml_to_diaguide_csv.py data/ohio/raw/OhioT1DM-2-training/540-ws-training.xml -o app/src/main/assets/sample_imports/ohio_540_sample.csv
+```
+
+При использовании данных в диссертации укажите цитирование по требованиям авторов и лицензии.
+
+---
+
+## Демонстрационные данные в репозитории
+
+- Встроенные **синтетические сценарии** (стабильный день, повторяющиеся высокие/низкие, колебания, ночные эпизоды).
+- Примеры файлов в `app/src/main/assets/sample_imports/` (`stable_day.csv`, `repeated_high.json` и при необходимости сконвертированные выше).
+
+Полные внешние датасеты в репозиторий **не** включены (объём и лицензии); пользователь подставляет свои файлы локально.
+
+---
+
+## Архитектура (модули по пакетам)
 
 ```
-presentation/   UI, screens, navigation, view models
-domain/         models, repository contracts, engines, use cases
-data/           Room, DataStore, parsers, repositories, mock data
-core/           reusable UI and helper utilities
-di/             Hilt modules
+presentation/   экраны, навигация, ViewModel
+domain/         модели, контракты репозиториев, движки анализа, сценарии использования
+data/           Room, DataStore, парсеры импорта, реализации репозиториев, mock-данные
+core/           общие UI-компоненты, утилиты
+di/             модули Hilt
 ```
 
-## Important simplifications
+Используется **один** Gradle-модуль `app` с разделением по пакетам для простоты открытия и сопровождения.
 
-- The app uses a single Gradle module (`app`) with strict package-based layering to keep the prototype easy to open and demonstrate.
-- Mixed units are not automatically normalized across imported files. The prototype assumes the imported data is aligned with the selected unit.
-- CSV parsing is lightweight and intended for well-formed research/demo input files.
-- Future device integration is represented by interfaces and placeholders only.
+---
 
-## Suggested thesis chapter 3 description
+## Упрощения и ограничения
 
-In chapter 3, this implementation can be described as:
-1. design of a mobile prototype architecture for CGM data processing;
-2. implementation of the data layer with local persistence and import subsystem;
-3. implementation of a rule-based analysis engine for trend and deviation detection;
-4. implementation of a recommendation engine with explainable informational prompts;
-5. implementation of a Compose-based UI for visualization, history, recommendations, and settings;
-6. testing on synthetic scenarios that represent stable behavior, recurrent hyperglycemia, recurrent hypoglycemia, rapid oscillation, and night episodes.
+- Смешение единиц в разных файлах **автоматически не нормализуется** — предполагается согласование с выбранной единицей в настройках.
+- Парсинг CSV рассчитан на корректно оформленные исследовательские/демо-файлы.
+- Интеграция с реальным CGM-оборудованием представлена заглушками и интерфейсами.
 
-## Deliverable map
+---
 
-See `DELIVERABLE_A_TO_T.md` for a structured A–T response matching the requested thesis-oriented output format.
+## Дипломная документация
+
+Для описания реализации в главе 3 можно выделить: архитектуру мобильного прототипа; слой данных с локальным хранением и импортом; rule-based анализ CGM; движок рекомендаций с объяснимыми формулировками; UI на Compose; тестирование на синтетике.
+
+Структурированный ответ по формату A–T: файл **`DELIVERABLE_A_TO_T.md`**.
+
+---
+
+## Непрерывная интеграция
+
+В репозитории настроен workflow **`.github/workflows/android-ci.yml`** (сборка и тесты при push/PR). Для успешного прохождения CI в среде сборки нужны JDK и Android SDK (как в типичном GitHub Actions образе).
+
+---
+
+## Иконка приложения
+
+- Передний план: растровое изображение маскота в `drawable-nodpi/`, обёртка **`ic_launcher_foreground.xml`** (inset для безопасной зоны adaptive icon).
+- Фон adaptive icon: цвет **`ic_launcher_background`** (мятный тон под иллюстрацию).
+- Круглая и обычная иконки: `mipmap-anydpi-v26/`.
+
+---
+
+## Лицензии сторонних данных
+
+При использовании **T1D-UOM (Zenodo)** и других открытых наборов соблюдайте условия лицензии (например CC BY) и указывайте DOI/публикацию в работе.
+
+---
+
+*Документ README отражает состояние проекта на момент версии **1.3.0**. Подробная таблица версий — в **`VERSION_HISTORY.txt`***.

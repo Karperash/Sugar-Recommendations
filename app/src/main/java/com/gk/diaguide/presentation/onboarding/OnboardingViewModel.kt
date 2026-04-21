@@ -81,6 +81,7 @@ class OnboardingViewModel @Inject constructor(
                     criticalHigh = criticalHigh ?: 250.0,
                     onboardingCompleted = true,
                     disclaimerAccepted = uiState.disclaimerAccepted,
+                    settingsIntroCompleted = true,
                 ),
             )
             settingsRepository.completeOnboarding(completed = true, disclaimerAccepted = uiState.disclaimerAccepted)

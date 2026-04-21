@@ -44,10 +44,10 @@ class ReminderWorker(
     private fun ensureChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Measurement reminders",
+            context.getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {
-            description = "Periodic reminders to check glucose"
+            description = context.getString(R.string.notification_channel_desc)
         }
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)

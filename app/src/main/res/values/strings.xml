@@ -1,148 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DiaGuide CGM</string>
 
-    <!-- Splash -->
+    <!-- Экран загрузки -->
     <string name="splash_title">DiaGuide CGM</string>
-    <string name="splash_subtitle">Loading local profile and settings</string>
+    <string name="splash_subtitle">Загрузка профиля и настроек</string>
 
-    <!-- Onboarding -->
-    <string name="onboarding_title">Initial setup</string>
-    <string name="onboarding_intro">This research prototype uses editable user-defined glucose thresholds. Medical fields are optional and can be changed later.</string>
-    <string name="onboarding_name_label">Name or nickname</string>
-    <string name="onboarding_diabetes_type_label">Diabetes type (optional)</string>
-    <string name="onboarding_age_group_label">Age group (optional)</string>
-    <string name="onboarding_unit_label">Unit</string>
-    <string name="onboarding_disclaimer_text">I understand that this prototype is not a medical device and does not provide diagnosis or insulin dosing.</string>
-    <string name="onboarding_error">Fill numeric thresholds and accept the disclaimer to continue.</string>
-    <string name="onboarding_continue">Continue</string>
+    <!-- Первичная настройка (форма) -->
+    <string name="onboarding_title">Начальная настройка</string>
+    <string name="onboarding_intro">Этот исследовательский прототип использует редактируемые пользователем пороговые значения глюкозы. Медицинские поля необязательны и могут быть изменены позже.</string>
+    <string name="onboarding_name_label">Имя или никнейм</string>
+    <string name="onboarding_diabetes_type_label">Тип диабета (необязательно)</string>
+    <string name="onboarding_age_group_label">Возрастная группа (необязательно)</string>
+    <string name="onboarding_unit_label">Единица измерения</string>
+    <string name="onboarding_disclaimer_text">Я понимаю, что этот прототип не является медицинским изделием и не предоставляет диагнозов или рекомендаций по дозировке инсулина.</string>
+    <string name="onboarding_error">Заполните числовые пороги и примите отказ от ответственности для продолжения.</string>
+    <string name="onboarding_continue">Продолжить</string>
 
-    <!-- Threshold labels (shared between onboarding and settings) -->
-    <string name="threshold_target_low">Target low</string>
-    <string name="threshold_target_high">Target high</string>
-    <string name="threshold_warning_low">Warning low</string>
-    <string name="threshold_warning_high">Warning high</string>
-    <string name="threshold_critical_low">Critical low</string>
-    <string name="threshold_critical_high">Critical high</string>
-    <string name="threshold_rapid_rise">Rapid rise per 15 min</string>
-    <string name="threshold_rapid_fall">Rapid fall per 15 min</string>
-    <string name="threshold_prolonged_minutes">Prolonged minutes</string>
-    <string name="threshold_pattern_window_hours">Pattern window hours</string>
+    <!-- Подписи полей порогов -->
+    <string name="threshold_target_low">Целевой минимум</string>
+    <string name="threshold_target_high">Целевой максимум</string>
+    <string name="threshold_warning_low">Предупреждение: низкий</string>
+    <string name="threshold_warning_high">Предупреждение: высокий</string>
+    <string name="threshold_critical_low">Критический минимум</string>
+    <string name="threshold_critical_high">Критический максимум</string>
+    <string name="threshold_rapid_rise">Быстрый рост за 15 мин</string>
+    <string name="threshold_rapid_fall">Быстрое падение за 15 мин</string>
+    <string name="threshold_prolonged_minutes">Длительность отклонения (мин)</string>
+    <string name="threshold_pattern_window_hours">Окно анализа паттернов (ч)</string>
 
-    <!-- Dashboard -->
-    <string name="dashboard_title">Dashboard</string>
-    <string name="dashboard_refresh">Refresh</string>
-    <string name="dashboard_version">v%1$s</string>
-    <string name="dashboard_current_glucose">Current glucose</string>
-    <string name="dashboard_no_readings">No readings yet. Add a manual entry or import data.</string>
-    <string name="dashboard_today_summary">Today\'s summary</string>
-    <string name="dashboard_min">Min: %1$s</string>
-    <string name="dashboard_max">Max: %1$s</string>
-    <string name="dashboard_average">Average: %1$s</string>
-    <string name="dashboard_time_in_target">Time in target: %1$s%%</string>
-    <string name="dashboard_active_recommendations">Active recommendations</string>
-    <string name="dashboard_no_recommendations">No active recommendations for today.</string>
-    <string name="dashboard_add_entry">Add entry</string>
-    <string name="dashboard_import_file">Import file</string>
-    <string name="dashboard_open_chart">Open chart</string>
-    <string name="dashboard_recommendations">Recommendations</string>
-    <string name="dashboard_event_log">Event log</string>
-    <string name="dashboard_disclaimer">Educational disclaimer: this app does not diagnose disease and does not calculate insulin doses. In urgent situations, contact a clinician or emergency services.</string>
-    <string name="status_critical">Critical</string>
-    <string name="status_out_of_range">Out of range</string>
-    <string name="status_in_target">In target</string>
+    <!-- Главный экран -->
+    <string name="dashboard_title">Главная</string>
+    <string name="dashboard_refresh">Обновить</string>
+    <string name="dashboard_version">Версия %1$s</string>
+    <string name="dashboard_current_glucose">Текущая глюкоза</string>
+    <string name="dashboard_no_readings">Нет данных. Добавьте запись вручную или импортируйте файл.</string>
+    <string name="empty_state_readings_title">Нет данных глюкозы</string>
+    <string name="empty_state_summary_title">Нет данных за сегодня</string>
+    <string name="empty_state_summary_message">Импортируйте файл или добавьте запись вручную, чтобы увидеть мин., макс. и время в диапазоне.</string>
+    <string name="empty_state_recommendations_title">Нет рекомендаций</string>
+    <string name="empty_state_history_title">История пуста</string>
+    <string name="empty_state_chart_title">Нечего отображать</string>
+    <string name="dashboard_today_summary">Сводка за сегодня</string>
+    <string name="dashboard_min">Мин: %1$s</string>
+    <string name="dashboard_max">Макс: %1$s</string>
+    <string name="dashboard_average">Среднее: %1$s</string>
+    <string name="dashboard_time_in_target">Время в целевом диапазоне: %1$s%%</string>
+    <string name="dashboard_active_recommendations">Активные рекомендации</string>
+    <string name="dashboard_no_recommendations">Нет активных рекомендаций на сегодня.</string>
+    <string name="dashboard_add_entry">Добавить запись</string>
+    <string name="dashboard_import_file">Импорт файла</string>
+    <string name="dashboard_open_chart">Открыть график</string>
+    <string name="dashboard_recommendations">Рекомендации</string>
+    <string name="dashboard_event_log">Журнал событий</string>
+    <string name="dashboard_disclaimer">Образовательный отказ: это приложение не диагностирует заболевания и не рассчитывает дозы инсулина. В экстренных ситуациях обращайтесь к врачу или в скорую помощь.</string>
+    <string name="status_critical">Критический</string>
+    <string name="status_out_of_range">Вне диапазона</string>
+    <string name="status_in_target">В целевом</string>
 
-    <!-- Chart -->
-    <string name="chart_title">CGM chart</string>
-    <string name="chart_glucose_over_time">Glucose over time</string>
-    <string name="chart_no_data">No data available in the selected time interval.</string>
-    <string name="chart_latest_point">Latest point: %1$s</string>
-    <string name="chart_event_markers_title">Event markers</string>
-    <string name="chart_event_markers_blue">Blue markers represent tagged records such as meal, activity, insulin, or symptoms.</string>
-    <string name="chart_event_markers_amber">Amber markers indicate out-of-range values. Red markers indicate critical thresholds.</string>
-    <string name="chart_range_today">Today</string>
-    <string name="chart_range_3days">3 days</string>
-    <string name="chart_range_7days">7 days</string>
+    <!-- График CGM -->
+    <string name="chart_title">График CGM</string>
+    <string name="chart_glucose_over_time">Глюкоза по времени</string>
+    <string name="chart_no_data">Нет данных за выбранный период.</string>
+    <string name="chart_latest_point">Последняя точка: %1$s</string>
+    <string name="chart_event_markers_title">Маркеры событий</string>
+    <string name="chart_event_markers_blue">Синие маркеры обозначают записи с тегами: приём пищи, активность, инсулин или симптомы.</string>
+    <string name="chart_event_markers_amber">Жёлтые маркеры — значения вне диапазона. Красные — критические пороги.</string>
+    <string name="chart_range_today">Сегодня</string>
+    <string name="chart_range_3days">3 дня</string>
+    <string name="chart_range_7days">7 дней</string>
+    <string name="chart_range_subtitle">Выбранный интервал: %1$s</string>
+    <string name="chart_point_tooltip">%1$s · %2$s</string>
 
-    <!-- History -->
-    <string name="history_title">History</string>
-    <string name="history_no_readings">No readings stored yet.</string>
-    <string name="history_source">Source: %1$s</string>
-    <string name="history_note">Note: %1$s</string>
-    <string name="history_tags">Tags: %1$s</string>
-    <string name="tag_meal">meal</string>
-    <string name="tag_insulin">insulin</string>
-    <string name="tag_activity">activity</string>
-    <string name="tag_sleep">sleep</string>
-    <string name="tag_stress">stress</string>
-    <string name="tag_symptom">symptom</string>
+    <!-- История записей -->
+    <string name="history_title">История</string>
+    <string name="history_no_readings">Записи пока отсутствуют.</string>
+    <string name="history_source">Источник: %1$s</string>
+    <string name="history_note">Заметка: %1$s</string>
+    <string name="history_tags">Теги: %1$s</string>
+    <string name="entry_source_manual">Ручной ввод</string>
+    <string name="entry_source_csv_import">Импорт CSV</string>
+    <string name="entry_source_json_import">Импорт JSON</string>
+    <string name="entry_source_mock">Тестовые данные</string>
+    <string name="entry_source_api_placeholder">API (заглушка)</string>
+    <string name="entry_source_bluetooth_placeholder">Bluetooth (заглушка)</string>
+    <string name="tag_meal">приём пищи</string>
+    <string name="tag_insulin">инсулин</string>
+    <string name="tag_activity">активность</string>
+    <string name="tag_sleep">сон</string>
+    <string name="tag_stress">стресс</string>
+    <string name="tag_symptom">симптом</string>
 
-    <!-- Recommendations -->
-    <string name="recommendations_title">Recommendations</string>
-    <string name="recommendations_empty">No recommendations generated yet.</string>
-    <string name="recommendations_pattern">Pattern: %1$s</string>
+    <!-- Рекомендации -->
+    <string name="recommendations_title">Рекомендации</string>
+    <string name="recommendations_empty">Рекомендации ещё не сформированы.</string>
+    <string name="recommendations_pattern">Паттерн: %1$s</string>
+    <string name="severity_informational">Информация</string>
+    <string name="severity_warning">Внимание</string>
+    <string name="severity_urgent">Срочно</string>
+    <string name="reco_title_critical_low">Срочно: значение ниже критически низкого порога</string>
+    <string name="reco_body_critical_low">Повторно проверьте глюкозу и при недомогании обратитесь к врачу или в скорую помощь.</string>
+    <string name="reco_title_critical_high">Срочно: значение выше критически высокого порога</string>
+    <string name="reco_body_critical_high">Оцените симптомы и заметки. При тяжёлом состоянии свяжитесь с врачом или вызовите скорую.</string>
+    <string name="reco_title_low_value">Обнаружено низкое значение глюкозы</string>
+    <string name="reco_body_low_value">Скоро повторите измерение и при необходимости зафиксируйте симптомы. Сопоставьте с приёмом пищи или активностью.</string>
+    <string name="reco_title_high_value">Обнаружено высокое значение глюкозы</string>
+    <string name="reco_body_high_value">Просмотрите недавние приёмы пищи, стресс и активность; отметьте, повторяется ли эпизод.</string>
+    <string name="reco_title_rapid_rise">Быстрый рост глюкозы</string>
+    <string name="reco_body_rapid_rise">Проверьте недавний приём пищи и следующие замеры, чтобы подтвердить тенденцию.</string>
+    <string name="reco_title_rapid_fall">Быстрое снижение глюкозы</string>
+    <string name="reco_body_rapid_fall">Имеет смысл перепроверить глюкозу через короткий интервал и записать симптомы.</string>
+    <string name="reco_title_prolonged">Длительный выход за целевой диапазон</string>
+    <string name="reco_body_prolonged">Зафиксирован длительный период вне цели. Сохраните запись эпизода; при повторениях обсудите с врачом.</string>
+    <string name="reco_title_repeated">Повторяющиеся отклонения</string>
+    <string name="reco_body_repeated">В окне наблюдения несколько отдельных выходов за диапазон. При сохранении тенденции стоит обсудить с командой лечения.</string>
+    <string name="reco_title_morning_highs">Утренние повышения</string>
+    <string name="reco_body_morning_highs">Частые утренние повышения. Отметьте режим и проверьте, повторяется ли паттерн.</string>
+    <string name="reco_title_post_meal">Возможный скачок после еды</string>
+    <string name="reco_body_post_meal">После отмеченного приёма пищи — повышенные значения. Продолжайте отмечать приёмы пищи для анализа.</string>
+    <string name="reco_title_night_low">Ночные снижения</string>
+    <string name="reco_body_night_low">Ночью зафиксированы повторные низкие значения. Отслеживайте повторяемость и при необходимости обсудите с врачом.</string>
 
-    <!-- Events -->
-    <string name="events_title">Event log</string>
-    <string name="events_empty">No events logged yet.</string>
-    <string name="events_type">Type: %1$s</string>
+    <!-- Журнал событий -->
+    <string name="events_title">Журнал событий</string>
+    <string name="events_empty">События пока не зафиксированы.</string>
+    <string name="events_type">Тип: %1$s</string>
+    <string name="event_type_note">Заметка</string>
+    <string name="event_type_meal">Приём пищи</string>
+    <string name="event_type_insulin">Инсулин</string>
+    <string name="event_type_activity">Активность</string>
+    <string name="event_type_sleep">Сон</string>
+    <string name="event_type_stress">Стресс</string>
+    <string name="event_type_symptom">Симптом</string>
+    <string name="event_type_import">Импорт</string>
 
-    <!-- Manual Entry -->
-    <string name="manual_title">Manual entry</string>
-    <string name="manual_glucose_value">Glucose value</string>
-    <string name="manual_trend_label">Trend</string>
-    <string name="manual_note_label">Note</string>
-    <string name="manual_tags_title">Tags</string>
-    <string name="manual_tag_meal">Meal</string>
-    <string name="manual_tag_insulin">Insulin</string>
-    <string name="manual_tag_activity">Activity</string>
-    <string name="manual_tag_sleep">Sleep</string>
-    <string name="manual_tag_stress">Stress</string>
-    <string name="manual_tag_symptom">Symptom</string>
-    <string name="manual_save">Save entry</string>
-    <string name="manual_error_invalid_value">Enter a valid glucose value.</string>
+    <!-- Ручной ввод -->
+    <string name="manual_title">Ручной ввод</string>
+    <string name="manual_glucose_value">Значение глюкозы</string>
+    <string name="manual_trend_label">Тренд</string>
+    <string name="trend_double_up">Сильный рост</string>
+    <string name="trend_up">Рост</string>
+    <string name="trend_flat">Без изменений</string>
+    <string name="trend_down">Снижение</string>
+    <string name="trend_double_down">Сильное снижение</string>
+    <string name="trend_unknown">Неизвестно</string>
+    <string name="manual_note_label">Заметка</string>
+    <string name="manual_tags_title">Теги</string>
+    <string name="manual_tag_meal">Еда</string>
+    <string name="manual_tag_insulin">Инсулин</string>
+    <string name="manual_tag_activity">Активность</string>
+    <string name="manual_tag_sleep">Сон</string>
+    <string name="manual_tag_stress">Стресс</string>
+    <string name="manual_tag_symptom">Симптом</string>
+    <string name="manual_save">Сохранить запись</string>
+    <string name="manual_error_invalid_value">Введите корректное значение глюкозы.</string>
 
-    <!-- Import -->
-    <string name="import_title">Import data</string>
-    <string name="import_description">Import CGM-like records from a local file.</string>
-    <string name="import_csv">Import CSV</string>
-    <string name="import_json">Import JSON</string>
-    <string name="import_synthetic_title">Synthetic test scenarios</string>
+    <!-- Импорт данных -->
+    <string name="import_title">Импорт данных</string>
+    <string name="import_description">Импорт CGM-записей из локального файла.</string>
+    <string name="import_csv">Импорт CSV</string>
+    <string name="import_json">Импорт JSON</string>
+    <string name="import_synthetic_title">Синтетические тестовые сценарии</string>
+    <string name="scenario_stable_day">Стабильный день</string>
+    <string name="scenario_repeated_high">Повторяющиеся высокие</string>
+    <string name="scenario_repeated_low">Повторяющиеся низкие</string>
+    <string name="scenario_sharp_fluctuations">Резкие колебания</string>
+    <string name="scenario_night_episodes">Ночные эпизоды</string>
+    <string name="import_error_empty_file">Файл пустой.</string>
+    <string name="import_error_read">Не удалось прочитать файл.</string>
+    <string name="import_error_parse">Не удалось разобрать файл: %1$s</string>
+    <string name="import_zero_rows">Не импортировано ни одной строки. Проверьте имена столбцов (timestamp, glucoseValue) и форматы.</string>
+    <string name="import_completed_csv">Импорт CSV завершён: записей — %1$d.</string>
+    <string name="import_completed_json">Импорт JSON завершён: записей — %1$d.</string>
+    <string name="import_completed_scenario">Загружен сценарий: %1$s</string>
+    <string name="import_preview_label">Начало файла (предпросмотр)</string>
+    <string name="import_event_csv_title">Импорт CSV</string>
+    <string name="import_event_csv_desc">Импортировано записей CGM из CSV: %1$d.</string>
+    <string name="import_event_json_title">Импорт JSON</string>
+    <string name="import_event_json_desc">Импортировано записей CGM из JSON: %1$d.</string>
 
-    <!-- Settings -->
-    <string name="settings_title">Settings</string>
-    <string name="settings_profile">Profile</string>
-    <string name="settings_name_label">Name or nickname</string>
-    <string name="settings_diabetes_type_label">Diabetes type (optional)</string>
-    <string name="settings_age_group_label">Age group (optional)</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_language_system">System default</string>
-    <string name="settings_language_english">English</string>
-    <string name="settings_language_russian">Russian</string>
-    <string name="settings_glucose_unit">Glucose unit</string>
-    <string name="settings_reminders">Reminders</string>
-    <string name="settings_reminder_interval">Reminder interval (hours, 0 = off)</string>
-    <string name="settings_save">Save settings</string>
-    <string name="settings_saved">Settings saved.</string>
-    <string name="settings_open_disclaimer">Open disclaimer</string>
+    <!-- Настройки -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_intro_completed">Первичная настройка сохранена. При необходимости измените пороги ниже.</string>
+    <string name="settings_profile">Профиль</string>
+    <string name="settings_name_label">Имя или никнейм</string>
+    <string name="settings_diabetes_type_label">Тип диабета (необязательно)</string>
+    <string name="settings_age_group_label">Возрастная группа (необязательно)</string>
+    <string name="settings_glucose_unit">Единица глюкозы</string>
+    <string name="unit_mg_dl">мг/дл</string>
+    <string name="unit_mmol_l">ммоль/л</string>
+    <string name="settings_reminders">Напоминания</string>
+    <string name="settings_reminder_interval">Интервал напоминания (часов, 0 = выкл.)</string>
+    <string name="settings_reco_presets">Пресеты для рекомендаций</string>
+    <string name="settings_preset_zenodo">Профиль Zenodo T1D-UOM (ммоль/л)</string>
+    <string name="settings_preset_zenodo_applied">Поля заполнены под датасет T1D-UOM (Zenodo). Нажмите «Сохранить».</string>
+    <string name="settings_preset_ohio">Профиль OhioT1DM (исслед., мг/дл)</string>
+    <string name="settings_preset_ohio_applied">Поля заполнены профилем OhioT1DM. Нажмите «Сохранить».</string>
+    <string name="settings_save">Сохранить настройки</string>
+    <string name="settings_saved">Настройки сохранены.</string>
+    <string name="settings_open_disclaimer">Открыть отказ</string>
 
-    <!-- About -->
-    <string name="about_title">About and disclaimer</string>
-    <string name="about_research_prototype">Research prototype</string>
-    <string name="about_description">DiaGuide CGM is a master\'s thesis prototype designed to analyze CGM-like data and generate explainable rule-based informational recommendations.</string>
-    <string name="about_safety_title">Safety disclaimer</string>
-    <string name="about_not_medical_device">This application is not a certified medical device.</string>
-    <string name="about_no_diagnosis">It does not diagnose diabetes-related conditions.</string>
-    <string name="about_no_insulin">It does not calculate insulin doses or prescribe treatment.</string>
-    <string name="about_thresholds">All thresholds are user-editable and intended for demonstration and research use.</string>
-    <string name="about_emergency">If symptoms are severe or values are dangerous, contact a clinician or emergency services.</string>
+    <!-- О приложении -->
+    <string name="about_title">О приложении и отказ</string>
+    <string name="about_research_prototype">Исследовательский прототип</string>
+    <string name="about_description">DiaGuide CGM — прототип магистерской диссертации для анализа CGM-данных и генерации объяснимых информационных рекомендаций на основе правил.</string>
+    <string name="about_safety_title">Отказ от ответственности</string>
+    <string name="about_not_medical_device">Это приложение не является сертифицированным медицинским изделием.</string>
+    <string name="about_no_diagnosis">Оно не диагностирует заболевания, связанные с диабетом.</string>
+    <string name="about_no_insulin">Оно не рассчитывает дозы инсулина и не назначает лечение.</string>
+    <string name="about_thresholds">Все пороговые значения редактируются пользователем и предназначены для демонстрации и исследований.</string>
+    <string name="about_emergency">При тяжёлых симптомах или опасных значениях обращайтесь к врачу или в скорую помощь.</string>
 
-    <!-- Bottom navigation -->
-    <string name="nav_dashboard">Dashboard</string>
-    <string name="nav_chart">Chart</string>
-    <string name="nav_history">History</string>
-    <string name="nav_recommendations">Recommendations</string>
-    <string name="nav_settings">Settings</string>
+    <!-- Верхняя панель: маршруты экранов -->
+    <string name="nav_splash">Загрузка</string>
 
-    <!-- Notifications -->
-    <string name="reminder_notification_text">Time to check your glucose level</string>
+    <!-- Нижняя навигация -->
+    <string name="nav_dashboard">Главная</string>
+    <string name="nav_chart">График</string>
+    <string name="nav_history">История</string>
+    <string name="nav_recommendations">Рекомендации</string>
+    <string name="nav_settings">Настройки</string>
+
+    <!-- Уведомления -->
+    <string name="reminder_notification_text">Время проверить уровень глюкозы</string>
+    <string name="notification_channel_name">Напоминания о замерах</string>
+    <string name="notification_channel_desc">Периодические напоминания проверить глюкозу</string>
 </resources>

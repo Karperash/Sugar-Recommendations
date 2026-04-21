@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gk.diaguide.R
+import com.gk.diaguide.core.ui.Dimens
 import com.gk.diaguide.core.ui.SeverityChip
 import com.gk.diaguide.core.util.formatDateTime
 import com.gk.diaguide.domain.model.Recommendation
@@ -26,17 +27,17 @@ import com.gk.diaguide.domain.model.Recommendation
 fun RecommendationsScreen(recommendations: List<Recommendation>) {
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.recommendations_title)) }) }) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.screenPadding),
+            verticalArrangement = Arrangement.spacedBy(Dimens.itemSpacing),
         ) {
             if (recommendations.isEmpty()) {
                 item { Text(stringResource(R.string.recommendations_empty)) }
             }
             items(recommendations) { recommendation ->
                 Card {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(recommendation.title, style = MaterialTheme.typography.titleMedium)
-                        Text(recommendation.shortExplanation)
+                    Column(modifier = Modifier.padding(Dimens.cardPadding), verticalArrangement = Arrangement.spacedBy(Dimens.chipSpacing)) {
+                        Text(recommendation.displayTitle(), style = MaterialTheme.typography.titleMedium)
+                        Text(recommendation.displayExplanation())
                         Text(stringResource(R.string.recommendations_pattern, recommendation.relatedDetectedPattern))
                         Text(recommendation.timestamp.formatDateTime(), style = MaterialTheme.typography.bodySmall)
                         SeverityChip(recommendation.severity)

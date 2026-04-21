@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gk.diaguide.R
+import com.gk.diaguide.core.ui.eventTypeLabel
 import com.gk.diaguide.core.util.formatDateTime
 import com.gk.diaguide.domain.model.AppEvent
 
@@ -35,7 +36,7 @@ fun EventLogScreen(events: List<AppEvent>) {
                     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(event.title)
                         Text(event.description)
-                        Text(stringResource(R.string.events_type, event.type.name))
+                        Text(stringResource(R.string.events_type, eventTypeLabel(event.type)))
                         Text(event.timestamp.formatDateTime())
                     }
                 }

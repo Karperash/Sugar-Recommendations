@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
-enum class ChartRange(val label: String, val days: Long) {
-    TODAY("Today", 1),
-    THREE_DAYS("3 days", 3),
-    SEVEN_DAYS("7 days", 7),
+enum class ChartRange(val days: Long) {
+    TODAY(1),
+    THREE_DAYS(3),
+    SEVEN_DAYS(7),
 }
 
 data class ChartUiState(

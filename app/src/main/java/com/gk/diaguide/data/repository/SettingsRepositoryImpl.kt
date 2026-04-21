@@ -40,9 +40,12 @@ class SettingsRepositoryImpl @Inject constructor(
                 prolongedOutOfRangeMinutes = prefs[Keys.PROLONGED] ?: 45L,
                 patternWindowHours = prefs[Keys.PATTERN_WINDOW] ?: 24L,
                 reminderIntervalHours = prefs[Keys.REMINDER_INTERVAL] ?: 0L,
-                appLanguageTag = prefs[Keys.APP_LANGUAGE].orEmpty(),
+                appLanguageTag = prefs[Keys.APP_LANGUAGE].orEmpty().ifBlank { "ru" },
                 onboardingCompleted = prefs[Keys.ONBOARDING_COMPLETED] ?: false,
                 disclaimerAccepted = prefs[Keys.DISCLAIMER_ACCEPTED] ?: false,
+                settingsIntroCompleted = prefs[Keys.SETTINGS_INTRO_COMPLETED]
+                    ?: ((prefs[Keys.ONBOARDING_COMPLETED] ?: false) &&
+                        (prefs[Keys.DISCLAIMER_ACCEPTED] ?: false)),
             )
         }
 
@@ -73,6 +76,7 @@ class SettingsRepositoryImpl @Inject constructor(
             prefs[Keys.PATTERN_WINDOW] = settings.patternWindowHours
             prefs[Keys.REMINDER_INTERVAL] = settings.reminderIntervalHours
             prefs[Keys.APP_LANGUAGE] = settings.appLanguageTag
+            prefs[Keys.SETTINGS_INTRO_COMPLETED] = settings.settingsIntroCompleted
         }
     }
 
@@ -102,5 +106,6 @@ class SettingsRepositoryImpl @Inject constructor(
         val APP_LANGUAGE = stringPreferencesKey("app_language")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val DISCLAIMER_ACCEPTED = booleanPreferencesKey("disclaimer_accepted")
+        val SETTINGS_INTRO_COMPLETED = booleanPreferencesKey("settings_intro_completed")
     }
 }

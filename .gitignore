@@ -43,3 +43,11 @@ Thumbs.db
 
 # Kotlin
 .kotlin/
+
+# OhioT1DM raw XML (получить у авторов; не коммитить распакованные файлы)
+data/ohio/raw/*
+!data/ohio/raw/.gitkeep
+
+# Zenodo (T1D-UOM и др.) — не коммитить распакованные CSV
+data/zenodo/raw/*
+!data/zenodo/raw/.gitkeep
