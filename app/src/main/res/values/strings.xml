@@ -102,6 +102,9 @@
     <!-- Рекомендации -->
     <string name="recommendations_title">Рекомендации</string>
     <string name="recommendations_empty">Рекомендации ещё не сформированы.</string>
+    <string name="recommendations_open_hospitals_map">Показать ближайшие больницы на карте</string>
+    <string name="recommendations_hospitals_map_title">Ближайшие больницы (Яндекс Карты)</string>
+    <string name="recommendations_close_map">Закрыть карту</string>
     <string name="recommendations_pattern">Паттерн: %1$s</string>
     <string name="severity_informational">Информация</string>
     <string name="severity_warning">Внимание</string>
