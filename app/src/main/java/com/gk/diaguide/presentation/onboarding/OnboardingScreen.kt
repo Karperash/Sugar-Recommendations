@@ -66,6 +66,11 @@ fun OnboardingScreen(
                 onValueChange = { value -> onUpdate { it.copy(ageGroup = value) } },
                 label = { Text(stringResource(R.string.onboarding_age_group_label)) },
             )
+            OutlinedTextField(
+                value = state.biologicalSex,
+                onValueChange = { value -> onUpdate { it.copy(biologicalSex = value) } },
+                label = { Text(stringResource(R.string.onboarding_sex_label)) },
+            )
             UnitSelector(
                 selected = state.unit,
                 onSelected = { unit -> onUpdate { it.copy(unit = unit) } },

@@ -9,6 +9,7 @@ interface SettingsRepository {
         displayName: String,
         diabetesType: String,
         ageGroup: String,
+        biologicalSex: String,
     )
     suspend fun saveThresholds(settings: UserSettings)
     suspend fun completeOnboarding(completed: Boolean, disclaimerAccepted: Boolean)

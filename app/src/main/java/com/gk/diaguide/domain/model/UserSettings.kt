@@ -4,6 +4,7 @@ data class UserSettings(
     val displayName: String = "",
     val diabetesType: String = "",
     val ageGroup: String = "",
+    val biologicalSex: String = "",
     val glucoseUnit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: Double = 80.0,
     val targetHigh: Double = 140.0,

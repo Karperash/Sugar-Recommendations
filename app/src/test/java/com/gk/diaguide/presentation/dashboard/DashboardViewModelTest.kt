@@ -60,7 +60,12 @@ class DashboardViewModelTest {
             ),
         )
         override fun observeSettings(): Flow<UserSettings> = flow
-        override suspend fun saveProfile(displayName: String, diabetesType: String, ageGroup: String) = Unit
+        override suspend fun saveProfile(
+            displayName: String,
+            diabetesType: String,
+            ageGroup: String,
+            biologicalSex: String,
+        ) = Unit
         override suspend fun saveThresholds(settings: UserSettings) {
             flow.value = settings
         }

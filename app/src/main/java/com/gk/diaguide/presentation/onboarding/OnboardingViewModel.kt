@@ -20,6 +20,7 @@ data class OnboardingUiState(
     val displayName: String = "",
     val diabetesType: String = "",
     val ageGroup: String = "",
+    val biologicalSex: String = "",
     val unit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: String = "80",
     val targetHigh: String = "140",
@@ -66,12 +67,14 @@ class OnboardingViewModel @Inject constructor(
                 displayName = uiState.displayName,
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
+                biologicalSex = uiState.biologicalSex,
             )
             saveThresholdsUseCase(
                 UserSettings(
                     displayName = uiState.displayName,
                     diabetesType = uiState.diabetesType,
                     ageGroup = uiState.ageGroup,
+                    biologicalSex = uiState.biologicalSex,
                     glucoseUnit = uiState.unit,
                     targetLow = low ?: 80.0,
                     targetHigh = high ?: 140.0,

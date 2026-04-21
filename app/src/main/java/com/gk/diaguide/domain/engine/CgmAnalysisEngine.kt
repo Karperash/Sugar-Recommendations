@@ -26,11 +26,12 @@ class CgmAnalysisEngine @Inject constructor() {
         date: LocalDate,
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): AnalysisResult {
+        val effectiveSettings = settings.withProfileAdjustments()
         val dayRecords = records
             .filter { it.timestamp.atZone(zoneId).toLocalDate() == date }
             .sortedBy { it.timestamp }
 
-        val summary = buildSummary(dayRecords, settings, date)
+        val summary = buildSummary(dayRecords, effectiveSettings, date)
         if (dayRecords.isEmpty()) {
             return AnalysisResult(summary = summary, patterns = emptyList())
         }
@@ -38,7 +39,7 @@ class CgmAnalysisEngine @Inject constructor() {
         val patterns = mutableListOf<DetectedPattern>()
         val now = dayRecords.last().timestamp
 
-        if (dayRecords.any { it.glucoseValue <= settings.criticalLow }) {
+        if (dayRecords.any { it.glucoseValue <= effectiveSettings.criticalLow }) {
             patterns += pattern(
                 PatternType.CRITICAL_LOW,
                 "Detected critical low value",
@@ -48,7 +49,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue >= settings.criticalHigh }) {
+        if (dayRecords.any { it.glucoseValue >= effectiveSettings.criticalHigh }) {
             patterns += pattern(
                 PatternType.CRITICAL_HIGH,
                 "Detected critical high value",
@@ -58,7 +59,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue < settings.targetLow }) {
+        if (dayRecords.any { it.glucoseValue < effectiveSettings.targetLow }) {
             patterns += pattern(
                 PatternType.LOW_VALUE,
                 "Values below target range",
@@ -68,7 +69,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue > settings.targetHigh }) {
+        if (dayRecords.any { it.glucoseValue > effectiveSettings.targetHigh }) {
             patterns += pattern(
                 PatternType.HIGH_VALUE,
                 "Values above target range",
@@ -78,12 +79,12 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        patterns += detectRapidChanges(dayRecords, settings)
-        patterns += detectProlongedOutOfRange(dayRecords, settings)
-        patterns += detectRepeatedDeviations(dayRecords, settings)
-        patterns += detectMorningHighs(dayRecords, settings)
-        patterns += detectNightLows(dayRecords, settings)
-        patterns += detectPostMealSpikes(dayRecords, settings)
+        patterns += detectRapidChanges(dayRecords, effectiveSettings)
+        patterns += detectProlongedOutOfRange(dayRecords, effectiveSettings)
+        patterns += detectRepeatedDeviations(dayRecords, effectiveSettings)
+        patterns += detectMorningHighs(dayRecords, effectiveSettings)
+        patterns += detectNightLows(dayRecords, effectiveSettings)
+        patterns += detectPostMealSpikes(dayRecords, effectiveSettings)
 
         return AnalysisResult(summary = summary, patterns = patterns.distinctBy { it.type })
     }
@@ -334,4 +335,65 @@ class CgmAnalysisEngine @Inject constructor() {
         detectedAt = detectedAt,
         relatedPatternLabel = type.name.lowercase(Locale.US),
     )
+
+    private fun UserSettings.withProfileAdjustments(): UserSettings {
+        var adjusted = this
+
+        if (isYoungerProfile(ageGroup)) {
+            adjusted = adjusted.copy(
+                targetLow = maxOf(adjusted.targetLow, 90.0),
+                targetHigh = minOf(adjusted.targetHigh, 160.0),
+                warningLow = maxOf(adjusted.warningLow, 75.0),
+                warningHigh = minOf(adjusted.warningHigh, 190.0),
+                criticalLow = maxOf(adjusted.criticalLow, 60.0),
+                rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 0.9,
+                rapidFallThresholdPer15Min = adjusted.rapidFallThresholdPer15Min * 0.85,
+                prolongedOutOfRangeMinutes = maxOf((adjusted.prolongedOutOfRangeMinutes * 0.8).toLong(), 20L),
+            )
+        } else if (isOlderProfile(ageGroup)) {
+            adjusted = adjusted.copy(
+                targetLow = maxOf(adjusted.targetLow, 85.0),
+                warningLow = maxOf(adjusted.warningLow, 72.0),
+                criticalLow = maxOf(adjusted.criticalLow, 58.0),
+                rapidFallThresholdPer15Min = adjusted.rapidFallThresholdPer15Min * 0.9,
+            )
+        }
+
+        if (isFemaleProfile(biologicalSex)) {
+            adjusted = adjusted.copy(
+                rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 0.95,
+                rapidFallThresholdPer15Min = adjusted.rapidFallThresholdPer15Min * 0.95,
+                patternWindowHours = maxOf(adjusted.patternWindowHours, 36L),
+            )
+        }
+
+        return adjusted
+    }
+
+    private fun isYoungerProfile(value: String): Boolean {
+        val normalized = value.trim().lowercase(Locale.ROOT)
+        return normalized.contains("реб") ||
+            normalized.contains("дет") ||
+            normalized.contains("подрост") ||
+            normalized.contains("child") ||
+            normalized.contains("teen")
+    }
+
+    private fun isOlderProfile(value: String): Boolean {
+        val normalized = value.trim().lowercase(Locale.ROOT)
+        return normalized.contains("пожил") ||
+            normalized.contains("старш") ||
+            normalized.contains("65") ||
+            normalized.contains("elder") ||
+            normalized.contains("senior")
+    }
+
+    private fun isFemaleProfile(value: String): Boolean {
+        val normalized = value.trim().lowercase(Locale.ROOT)
+        return normalized == "ж" ||
+            normalized == "жен" ||
+            normalized.contains("жен") ||
+            normalized.contains("female") ||
+            normalized.contains("woman")
+    }
 }

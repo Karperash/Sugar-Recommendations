@@ -6,6 +6,7 @@ fun UserSettings.toOnboardingUiState(): OnboardingUiState = OnboardingUiState(
     displayName = displayName,
     diabetesType = diabetesType,
     ageGroup = ageGroup,
+    biologicalSex = biologicalSex,
     unit = glucoseUnit,
     targetLow = targetLow.toString(),
     targetHigh = targetHigh.toString(),

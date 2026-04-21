@@ -28,6 +28,7 @@ data class SettingsUiState(
     val displayName: String = "",
     val diabetesType: String = "",
     val ageGroup: String = "",
+    val biologicalSex: String = "",
     val unit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: String = "",
     val targetHigh: String = "",
@@ -108,6 +109,7 @@ class SettingsViewModel @Inject constructor(
                 displayName = ui.displayName,
                 diabetesType = ui.diabetesType,
                 ageGroup = ui.ageGroup,
+                biologicalSex = ui.biologicalSex,
                 glucoseUnit = ui.unit,
                 targetLow = low!!,
                 targetHigh = high!!,
@@ -124,6 +126,7 @@ class SettingsViewModel @Inject constructor(
                 displayName = updated.displayName,
                 diabetesType = updated.diabetesType,
                 ageGroup = updated.ageGroup,
+                biologicalSex = updated.biologicalSex,
             )
             saveThresholdsUseCase(updated)
             settingsRepository.completeOnboarding(completed = true, disclaimerAccepted = ui.disclaimerAccepted)
@@ -178,12 +181,14 @@ class SettingsViewModel @Inject constructor(
                 displayName = uiState.displayName,
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
+                biologicalSex = uiState.biologicalSex,
             )
             val current = settingsRepository.observeSettings().first()
             val updated = current.copy(
                 displayName = uiState.displayName,
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
+                biologicalSex = uiState.biologicalSex,
                 glucoseUnit = uiState.unit,
                 targetLow = uiState.targetLow.toDoubleOrNull() ?: current.targetLow,
                 targetHigh = uiState.targetHigh.toDoubleOrNull() ?: current.targetHigh,
@@ -210,6 +215,7 @@ class SettingsViewModel @Inject constructor(
         displayName = displayName,
         diabetesType = diabetesType,
         ageGroup = ageGroup,
+        biologicalSex = biologicalSex,
         unit = glucoseUnit,
         targetLow = targetLow.toString(),
         targetHigh = targetHigh.toString(),

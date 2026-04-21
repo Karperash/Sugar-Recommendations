@@ -28,6 +28,7 @@ class SettingsRepositoryImpl @Inject constructor(
                 displayName = prefs[Keys.DISPLAY_NAME].orEmpty(),
                 diabetesType = prefs[Keys.DIABETES_TYPE].orEmpty(),
                 ageGroup = prefs[Keys.AGE_GROUP].orEmpty(),
+                biologicalSex = prefs[Keys.BIOLOGICAL_SEX].orEmpty(),
                 glucoseUnit = prefs[Keys.UNIT]?.let { GlucoseUnit.valueOf(it) } ?: GlucoseUnit.MG_DL,
                 targetLow = prefs[Keys.TARGET_LOW] ?: 80.0,
                 targetHigh = prefs[Keys.TARGET_HIGH] ?: 140.0,
@@ -53,11 +54,13 @@ class SettingsRepositoryImpl @Inject constructor(
         displayName: String,
         diabetesType: String,
         ageGroup: String,
+        biologicalSex: String,
     ) {
         context.dataStore.edit { prefs ->
             prefs[Keys.DISPLAY_NAME] = displayName
             prefs[Keys.DIABETES_TYPE] = diabetesType
             prefs[Keys.AGE_GROUP] = ageGroup
+            prefs[Keys.BIOLOGICAL_SEX] = biologicalSex
         }
     }
 
@@ -91,6 +94,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val DISPLAY_NAME = stringPreferencesKey("display_name")
         val DIABETES_TYPE = stringPreferencesKey("diabetes_type")
         val AGE_GROUP = stringPreferencesKey("age_group")
+        val BIOLOGICAL_SEX = stringPreferencesKey("biological_sex")
         val UNIT = stringPreferencesKey("unit")
         val TARGET_LOW = doublePreferencesKey("target_low")
         val TARGET_HIGH = doublePreferencesKey("target_high")

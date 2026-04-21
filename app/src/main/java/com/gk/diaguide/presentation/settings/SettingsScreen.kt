@@ -76,6 +76,11 @@ fun SettingsScreen(
                 onValueChange = { value -> onUpdate { it.copy(ageGroup = value) } },
                 label = { Text(stringResource(R.string.settings_age_group_label)) },
             )
+            OutlinedTextField(
+                value = state.biologicalSex,
+                onValueChange = { value -> onUpdate { it.copy(biologicalSex = value) } },
+                label = { Text(stringResource(R.string.settings_sex_label)) },
+            )
 
             Text(stringResource(R.string.settings_glucose_unit))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import java.io.InputStream
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.UUID
@@ -33,8 +35,9 @@ class SaveUserProfileUseCase @Inject constructor(
         displayName: String,
         diabetesType: String,
         ageGroup: String,
+        biologicalSex: String,
     ) {
-        settingsRepository.saveProfile(displayName, diabetesType, ageGroup)
+        settingsRepository.saveProfile(displayName, diabetesType, ageGroup, biologicalSex)
     }
 }
 
@@ -155,6 +158,12 @@ class RefreshInsightsUseCase @Inject constructor(
     private val analysisEngine: CgmAnalysisEngine,
     private val recommendationEngine: RecommendationEngine,
 ) {
+    private companion object {
+        const val MIN_RECOMMENDATION_DAYS = 14L
+        const val MIN_DATA_COVERAGE = 0.70
+        const val DEFAULT_INTERVAL_MINUTES = 5L
+    }
+
     suspend operator fun invoke(
         date: LocalDate = LocalDate.now(),
         zoneId: ZoneId = ZoneId.systemDefault(),
@@ -163,9 +172,45 @@ class RefreshInsightsUseCase @Inject constructor(
         val start = date.atStartOfDay(zoneId).toInstant().toEpochMilli()
         val end = date.plusDays(1).atStartOfDay(zoneId).toInstant().toEpochMilli() - 1
         val entries = repository.observeEntriesBetween(start, end).firstValue()
+
+        val historyStartDate = date.minusDays(MIN_RECOMMENDATION_DAYS - 1)
+        val historyStart = historyStartDate.atStartOfDay(zoneId).toInstant().toEpochMilli()
+        val historyEntries = repository.observeEntriesBetween(historyStart, end).firstValue()
+        if (!isEnoughHistory(historyEntries, MIN_RECOMMENDATION_DAYS, MIN_DATA_COVERAGE)) {
+            repository.replaceRecommendations(emptyList())
+            return
+        }
+
         val analysis = analysisEngine.analyze(entries, settings, date, zoneId)
         val recommendations = recommendationEngine.generate(analysis.patterns, settings)
         repository.replaceRecommendations(recommendations)
+    }
+
+    private fun isEnoughHistory(
+        entries: List<CgmRecord>,
+        minDays: Long,
+        minCoverage: Double,
+    ): Boolean {
+        if (entries.isEmpty()) return false
+
+        val sorted = entries.map { it.timestamp }.sorted()
+        val spanDays = Duration.between(sorted.first(), sorted.last()).toDays() + 1
+        if (spanDays < minDays) return false
+
+        val stepMinutes = inferIntervalMinutes(sorted)
+        val coveredMinutes = minDays * 24L * 60L
+        val expectedPoints = (coveredMinutes / stepMinutes).coerceAtLeast(1L)
+        val coverage = entries.size.toDouble() / expectedPoints.toDouble()
+        return coverage >= minCoverage
+    }
+
+    private fun inferIntervalMinutes(timestamps: List<Instant>): Long {
+        val diffs = timestamps
+            .zipWithNext()
+            .map { (a, b) -> Duration.between(a, b).toMinutes().coerceAtLeast(1L) }
+            .sorted()
+        if (diffs.isEmpty()) return DEFAULT_INTERVAL_MINUTES
+        return diffs[diffs.size / 2].coerceAtLeast(1L)
     }
 }
 
