@@ -13,6 +13,8 @@
     <string name="onboarding_diabetes_type_label">Тип диабета (необязательно)</string>
     <string name="onboarding_age_group_label">Возрастная группа (необязательно)</string>
     <string name="onboarding_sex_label">Пол (необязательно)</string>
+    <string name="onboarding_weight_label">Вес, кг (необязательно)</string>
+    <string name="onboarding_height_label">Рост, см (необязательно)</string>
     <string name="onboarding_unit_label">Единица измерения</string>
     <string name="onboarding_disclaimer_text">Я понимаю, что этот прототип не является медицинским изделием и не предоставляет диагнозов или рекомендаций по дозировке инсулина.</string>
     <string name="onboarding_error">Заполните числовые пороги и примите отказ от ответственности для продолжения.</string>
@@ -91,6 +93,11 @@
     <string name="tag_sleep">сон</string>
     <string name="tag_stress">стресс</string>
     <string name="tag_symptom">симптом</string>
+
+    <!-- Питание -->
+    <string name="nutrition_title">Питание</string>
+    <string name="nutrition_intro">Демо-раздел завтраков. В будущем карточки будут связаны с рекомендациями по глюкозе через теги.</string>
+    <string name="nutrition_source">Источник: %1$s</string>
 
     <!-- Рекомендации -->
     <string name="recommendations_title">Рекомендации</string>
@@ -188,6 +195,8 @@
     <string name="settings_diabetes_type_label">Тип диабета (необязательно)</string>
     <string name="settings_age_group_label">Возрастная группа (необязательно)</string>
     <string name="settings_sex_label">Пол (необязательно)</string>
+    <string name="settings_weight_label">Вес, кг (необязательно)</string>
+    <string name="settings_height_label">Рост, см (необязательно)</string>
     <string name="settings_glucose_unit">Единица глюкозы</string>
     <string name="unit_mg_dl">мг/дл</string>
     <string name="unit_mmol_l">ммоль/л</string>
@@ -200,6 +209,7 @@
     <string name="settings_preset_ohio_applied">Поля заполнены профилем OhioT1DM. Нажмите «Сохранить».</string>
     <string name="settings_save">Сохранить настройки</string>
     <string name="settings_saved">Настройки сохранены.</string>
+    <string name="settings_open_history">Открыть историю</string>
     <string name="settings_open_disclaimer">Открыть отказ</string>
 
     <!-- О приложении -->
@@ -219,6 +229,7 @@
     <!-- Нижняя навигация -->
     <string name="nav_dashboard">Главная</string>
     <string name="nav_chart">График</string>
+    <string name="nav_nutrition">Питание</string>
     <string name="nav_history">История</string>
     <string name="nav_recommendations">Рекомендации</string>
     <string name="nav_settings">Настройки</string>

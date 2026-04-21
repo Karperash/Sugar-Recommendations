@@ -71,6 +71,16 @@ fun OnboardingScreen(
                 onValueChange = { value -> onUpdate { it.copy(biologicalSex = value) } },
                 label = { Text(stringResource(R.string.onboarding_sex_label)) },
             )
+            OutlinedTextField(
+                value = state.weightKg,
+                onValueChange = { value -> onUpdate { it.copy(weightKg = value) } },
+                label = { Text(stringResource(R.string.onboarding_weight_label)) },
+            )
+            OutlinedTextField(
+                value = state.heightCm,
+                onValueChange = { value -> onUpdate { it.copy(heightCm = value) } },
+                label = { Text(stringResource(R.string.onboarding_height_label)) },
+            )
             UnitSelector(
                 selected = state.unit,
                 onSelected = { unit -> onUpdate { it.copy(unit = unit) } },

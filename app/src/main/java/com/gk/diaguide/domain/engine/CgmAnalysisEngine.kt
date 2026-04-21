@@ -338,6 +338,7 @@ class CgmAnalysisEngine @Inject constructor() {
 
     private fun UserSettings.withProfileAdjustments(): UserSettings {
         var adjusted = this
+        val bmi = bodyMassIndex()
 
         if (isYoungerProfile(ageGroup)) {
             adjusted = adjusted.copy(
@@ -364,6 +365,40 @@ class CgmAnalysisEngine @Inject constructor() {
                 rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 0.95,
                 rapidFallThresholdPer15Min = adjusted.rapidFallThresholdPer15Min * 0.95,
                 patternWindowHours = maxOf(adjusted.patternWindowHours, 36L),
+            )
+        } else if (isMaleProfile(biologicalSex)) {
+            adjusted = adjusted.copy(
+                rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 1.03,
+                patternWindowHours = maxOf(adjusted.patternWindowHours, 30L),
+            )
+        }
+
+        if (bmi != null && bmi >= 30.0) {
+            adjusted = adjusted.copy(
+                targetHigh = minOf(adjusted.targetHigh, 170.0),
+                warningHigh = minOf(adjusted.warningHigh, 210.0),
+                rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 0.92,
+                patternWindowHours = maxOf(adjusted.patternWindowHours, 36L),
+            )
+        } else if (bmi != null && bmi < 18.5) {
+            adjusted = adjusted.copy(
+                targetLow = maxOf(adjusted.targetLow, 85.0),
+                warningLow = maxOf(adjusted.warningLow, 72.0),
+                criticalLow = maxOf(adjusted.criticalLow, 58.0),
+                rapidFallThresholdPer15Min = adjusted.rapidFallThresholdPer15Min * 0.9,
+            )
+        }
+
+        if (isFemaleProfile(biologicalSex) && bmi != null && bmi < 18.5) {
+            adjusted = adjusted.copy(
+                criticalLow = maxOf(adjusted.criticalLow, 60.0),
+                prolongedOutOfRangeMinutes = maxOf((adjusted.prolongedOutOfRangeMinutes * 0.85).toLong(), 20L),
+            )
+        }
+        if (isMaleProfile(biologicalSex) && bmi != null && bmi >= 30.0) {
+            adjusted = adjusted.copy(
+                rapidRiseThresholdPer15Min = adjusted.rapidRiseThresholdPer15Min * 0.95,
+                targetHigh = minOf(adjusted.targetHigh, 165.0),
             )
         }
 
@@ -395,5 +430,13 @@ class CgmAnalysisEngine @Inject constructor() {
             normalized.contains("жен") ||
             normalized.contains("female") ||
             normalized.contains("woman")
+    }
+
+    private fun isMaleProfile(value: String): Boolean {
+        val normalized = value.trim().lowercase(Locale.ROOT)
+        return normalized == "м" ||
+            normalized.contains("муж") ||
+            normalized.contains("male") ||
+            normalized.contains("man")
     }
 }

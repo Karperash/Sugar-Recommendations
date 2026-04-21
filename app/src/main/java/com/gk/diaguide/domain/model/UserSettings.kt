@@ -5,6 +5,8 @@ data class UserSettings(
     val diabetesType: String = "",
     val ageGroup: String = "",
     val biologicalSex: String = "",
+    val weightKg: Double? = null,
+    val heightCm: Double? = null,
     val glucoseUnit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: Double = 80.0,
     val targetHigh: Double = 140.0,
@@ -23,4 +25,11 @@ data class UserSettings(
     val disclaimerAccepted: Boolean = false,
     /** Первичная анкета пройдена (раньше — полноэкранный онбординг; теперь — из «Настроек»). */
     val settingsIntroCompleted: Boolean = false,
-)
+) {
+    fun bodyMassIndex(): Double? {
+        val weight = weightKg ?: return null
+        val heightMeters = (heightCm ?: return null) / 100.0
+        if (weight <= 0.0 || heightMeters <= 0.0) return null
+        return weight / (heightMeters * heightMeters)
+    }
+}

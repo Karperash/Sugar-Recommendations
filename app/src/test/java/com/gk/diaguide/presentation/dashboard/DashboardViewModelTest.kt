@@ -65,6 +65,8 @@ class DashboardViewModelTest {
             diabetesType: String,
             ageGroup: String,
             biologicalSex: String,
+            weightKg: Double?,
+            heightCm: Double?,
         ) = Unit
         override suspend fun saveThresholds(settings: UserSettings) {
             flow.value = settings

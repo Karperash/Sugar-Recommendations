@@ -81,6 +81,16 @@ fun SettingsScreen(
                 onValueChange = { value -> onUpdate { it.copy(biologicalSex = value) } },
                 label = { Text(stringResource(R.string.settings_sex_label)) },
             )
+            OutlinedTextField(
+                value = state.weightKg,
+                onValueChange = { value -> onUpdate { it.copy(weightKg = value) } },
+                label = { Text(stringResource(R.string.settings_weight_label)) },
+            )
+            OutlinedTextField(
+                value = state.heightCm,
+                onValueChange = { value -> onUpdate { it.copy(heightCm = value) } },
+                label = { Text(stringResource(R.string.settings_height_label)) },
+            )
 
             Text(stringResource(R.string.settings_glucose_unit))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -118,6 +128,7 @@ fun SettingsScreen(
             state.message?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
 
             Button(onClick = onSave) { Text(stringResource(R.string.settings_save)) }
+            Button(onClick = { onNavigate(AppDestination.History) }) { Text(stringResource(R.string.settings_open_history)) }
             Button(onClick = { onNavigate(AppDestination.About) }) { Text(stringResource(R.string.settings_open_disclaimer)) }
         }
     }

@@ -129,6 +129,7 @@ class RecommendationEngine @Inject constructor() {
         val details = mutableListOf<String>()
         val age = settings.ageGroup.trim().lowercase(Locale.ROOT)
         val sex = settings.biologicalSex.trim().lowercase(Locale.ROOT)
+        val bmi = settings.bodyMassIndex()
 
         if (age.contains("реб") || age.contains("дет") || age.contains("подрост") || age.contains("child") || age.contains("teen")) {
             details += "younger age profile"
@@ -140,6 +141,14 @@ class RecommendationEngine @Inject constructor() {
             details += "female profile"
         } else if (sex == "м" || sex.contains("муж") || sex.contains("male") || sex.contains("man")) {
             details += "male profile"
+        }
+        if (bmi != null) {
+            val bmiLabel = when {
+                bmi < 18.5 -> "low BMI"
+                bmi >= 30.0 -> "high BMI"
+                else -> "normal BMI"
+            }
+            details += bmiLabel
         }
 
         return if (details.isNotEmpty()) {

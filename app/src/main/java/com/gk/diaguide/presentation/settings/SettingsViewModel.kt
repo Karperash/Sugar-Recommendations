@@ -29,6 +29,8 @@ data class SettingsUiState(
     val diabetesType: String = "",
     val ageGroup: String = "",
     val biologicalSex: String = "",
+    val weightKg: String = "",
+    val heightCm: String = "",
     val unit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: String = "",
     val targetHigh: String = "",
@@ -95,6 +97,8 @@ class SettingsViewModel @Inject constructor(
         val warningHigh = ui.warningHigh.toDoubleOrNull()
         val criticalLow = ui.criticalLow.toDoubleOrNull()
         val criticalHigh = ui.criticalHigh.toDoubleOrNull()
+        val weightKg = ui.weightKg.toDoubleOrNull()
+        val heightCm = ui.heightCm.toDoubleOrNull()
 
         if (!ui.disclaimerAccepted ||
             listOf(low, high, warningLow, warningHigh, criticalLow, criticalHigh).any { it == null }
@@ -110,6 +114,8 @@ class SettingsViewModel @Inject constructor(
                 diabetesType = ui.diabetesType,
                 ageGroup = ui.ageGroup,
                 biologicalSex = ui.biologicalSex,
+                weightKg = weightKg,
+                heightCm = heightCm,
                 glucoseUnit = ui.unit,
                 targetLow = low!!,
                 targetHigh = high!!,
@@ -127,6 +133,8 @@ class SettingsViewModel @Inject constructor(
                 diabetesType = updated.diabetesType,
                 ageGroup = updated.ageGroup,
                 biologicalSex = updated.biologicalSex,
+                weightKg = updated.weightKg,
+                heightCm = updated.heightCm,
             )
             saveThresholdsUseCase(updated)
             settingsRepository.completeOnboarding(completed = true, disclaimerAccepted = ui.disclaimerAccepted)
@@ -182,6 +190,8 @@ class SettingsViewModel @Inject constructor(
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
                 biologicalSex = uiState.biologicalSex,
+                weightKg = uiState.weightKg.toDoubleOrNull(),
+                heightCm = uiState.heightCm.toDoubleOrNull(),
             )
             val current = settingsRepository.observeSettings().first()
             val updated = current.copy(
@@ -189,6 +199,8 @@ class SettingsViewModel @Inject constructor(
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
                 biologicalSex = uiState.biologicalSex,
+                weightKg = uiState.weightKg.toDoubleOrNull() ?: current.weightKg,
+                heightCm = uiState.heightCm.toDoubleOrNull() ?: current.heightCm,
                 glucoseUnit = uiState.unit,
                 targetLow = uiState.targetLow.toDoubleOrNull() ?: current.targetLow,
                 targetHigh = uiState.targetHigh.toDoubleOrNull() ?: current.targetHigh,
@@ -216,6 +228,8 @@ class SettingsViewModel @Inject constructor(
         diabetesType = diabetesType,
         ageGroup = ageGroup,
         biologicalSex = biologicalSex,
+        weightKg = weightKg?.toString().orEmpty(),
+        heightCm = heightCm?.toString().orEmpty(),
         unit = glucoseUnit,
         targetLow = targetLow.toString(),
         targetHigh = targetHigh.toString(),

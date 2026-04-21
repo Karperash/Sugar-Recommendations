@@ -21,6 +21,8 @@ data class OnboardingUiState(
     val diabetesType: String = "",
     val ageGroup: String = "",
     val biologicalSex: String = "",
+    val weightKg: String = "",
+    val heightCm: String = "",
     val unit: GlucoseUnit = GlucoseUnit.MG_DL,
     val targetLow: String = "80",
     val targetHigh: String = "140",
@@ -56,6 +58,8 @@ class OnboardingViewModel @Inject constructor(
         val warningHigh = uiState.warningHigh.toDoubleOrNull()
         val criticalLow = uiState.criticalLow.toDoubleOrNull()
         val criticalHigh = uiState.criticalHigh.toDoubleOrNull()
+        val weightKg = uiState.weightKg.toDoubleOrNull()
+        val heightCm = uiState.heightCm.toDoubleOrNull()
 
         if (!uiState.disclaimerAccepted || listOf(low, high, warningLow, warningHigh, criticalLow, criticalHigh).any { it == null }) {
             uiState = uiState.copy(error = "Fill numeric thresholds and accept the disclaimer to continue.")
@@ -68,6 +72,8 @@ class OnboardingViewModel @Inject constructor(
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
                 biologicalSex = uiState.biologicalSex,
+                weightKg = weightKg,
+                heightCm = heightCm,
             )
             saveThresholdsUseCase(
                 UserSettings(
@@ -75,6 +81,8 @@ class OnboardingViewModel @Inject constructor(
                     diabetesType = uiState.diabetesType,
                     ageGroup = uiState.ageGroup,
                     biologicalSex = uiState.biologicalSex,
+                    weightKg = weightKg,
+                    heightCm = heightCm,
                     glucoseUnit = uiState.unit,
                     targetLow = low ?: 80.0,
                     targetHigh = high ?: 140.0,

@@ -36,8 +36,10 @@ class SaveUserProfileUseCase @Inject constructor(
         diabetesType: String,
         ageGroup: String,
         biologicalSex: String,
+        weightKg: Double?,
+        heightCm: Double?,
     ) {
-        settingsRepository.saveProfile(displayName, diabetesType, ageGroup, biologicalSex)
+        settingsRepository.saveProfile(displayName, diabetesType, ageGroup, biologicalSex, weightKg, heightCm)
     }
 }
 

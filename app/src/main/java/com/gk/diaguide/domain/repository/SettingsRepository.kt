@@ -10,6 +10,8 @@ interface SettingsRepository {
         diabetesType: String,
         ageGroup: String,
         biologicalSex: String,
+        weightKg: Double?,
+        heightCm: Double?,
     )
     suspend fun saveThresholds(settings: UserSettings)
     suspend fun completeOnboarding(completed: Boolean, disclaimerAccepted: Boolean)

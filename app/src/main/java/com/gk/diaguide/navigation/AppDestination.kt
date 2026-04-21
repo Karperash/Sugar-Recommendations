@@ -13,7 +13,8 @@ sealed class AppDestination(
     data object Onboarding : AppDestination("onboarding", "", R.string.onboarding_title)
     data object Dashboard : AppDestination("dashboard", "", R.string.nav_dashboard, showBottomBar = true)
     data object Chart : AppDestination("chart", "", R.string.nav_chart, showBottomBar = true)
-    data object History : AppDestination("history", "", R.string.nav_history, showBottomBar = true)
+    data object Nutrition : AppDestination("nutrition", "", R.string.nav_nutrition, showBottomBar = true)
+    data object History : AppDestination("history", "", R.string.nav_history)
     data object Recommendations : AppDestination("recommendations", "", R.string.nav_recommendations, showBottomBar = true)
     data object EventLog : AppDestination("events", "", R.string.events_title)
     data object ManualEntry : AppDestination("manual", "", R.string.manual_title)
@@ -25,7 +26,7 @@ sealed class AppDestination(
 val bottomDestinations = listOf(
     AppDestination.Dashboard,
     AppDestination.Chart,
-    AppDestination.History,
+    AppDestination.Nutrition,
     AppDestination.Recommendations,
     AppDestination.Settings,
 )

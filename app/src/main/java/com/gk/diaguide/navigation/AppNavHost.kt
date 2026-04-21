@@ -32,6 +32,7 @@ import com.gk.diaguide.presentation.imports.ImportScreen
 import com.gk.diaguide.presentation.imports.ImportViewModel
 import com.gk.diaguide.presentation.manual.ManualEntryScreen
 import com.gk.diaguide.presentation.manual.ManualEntryViewModel
+import com.gk.diaguide.presentation.nutrition.NutritionScreen
 import com.gk.diaguide.presentation.recommendations.RecommendationsScreen
 import com.gk.diaguide.presentation.recommendations.RecommendationsViewModel
 import com.gk.diaguide.presentation.settings.SettingsScreen
@@ -47,6 +48,7 @@ fun AppNavHost() {
     val destination = listOf(
         AppDestination.Dashboard,
         AppDestination.Chart,
+        AppDestination.Nutrition,
         AppDestination.History,
         AppDestination.Recommendations,
         AppDestination.Settings,
@@ -101,6 +103,10 @@ fun AppNavHost() {
                 val viewModel: ChartViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 ChartScreen(state = state, onRangeSelected = viewModel::setRange)
+            }
+
+            composable(AppDestination.Nutrition.route) {
+                NutritionScreen()
             }
 
             composable(AppDestination.History.route) {

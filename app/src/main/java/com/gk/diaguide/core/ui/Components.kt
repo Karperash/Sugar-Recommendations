@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.RestaurantMenu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShowChart
 import com.gk.diaguide.domain.model.RecommendationSeverity
@@ -117,6 +118,7 @@ fun AppBottomBar(
 private fun bottomNavIcon(destination: AppDestination): ImageVector = when (destination) {
     AppDestination.Dashboard -> Icons.Outlined.Home
     AppDestination.Chart -> Icons.Outlined.ShowChart
+    AppDestination.Nutrition -> Icons.Outlined.RestaurantMenu
     AppDestination.History -> Icons.Outlined.History
     AppDestination.Recommendations -> Icons.Outlined.Lightbulb
     AppDestination.Settings -> Icons.Outlined.Settings
