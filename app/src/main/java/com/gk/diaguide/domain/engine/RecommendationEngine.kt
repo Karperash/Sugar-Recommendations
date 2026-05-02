@@ -5,6 +5,7 @@ import com.gk.diaguide.domain.model.PatternType
 import com.gk.diaguide.domain.model.Recommendation
 import com.gk.diaguide.domain.model.RecommendationSeverity
 import com.gk.diaguide.domain.model.UserSettings
+import java.time.Instant
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
@@ -15,6 +16,20 @@ class RecommendationEngine @Inject constructor() {
         patterns: List<DetectedPattern>,
         settings: UserSettings,
     ): List<Recommendation> {
+        if (patterns.isEmpty()) {
+            val now = Instant.now()
+            return listOf(
+                Recommendation(
+                    id = UUID.randomUUID().toString(),
+                    title = "",
+                    shortExplanation = "",
+                    severity = RecommendationSeverity.INFORMATIONAL,
+                    timestamp = now,
+                    relatedDetectedPattern = PatternType.NO_SIGNIFICANT_PATTERNS.name,
+                    actionButtonLabel = null,
+                ),
+            )
+        }
         val profileHint = buildProfileHint(settings)
         return patterns.mapNotNull { pattern ->
             when (pattern.type) {
@@ -105,6 +120,8 @@ class RecommendationEngine @Inject constructor() {
                     pattern = pattern,
                     action = "View history",
                 )
+
+                PatternType.NO_SIGNIFICANT_PATTERNS -> null
             }
         }
     }

@@ -41,6 +41,8 @@ enum class PatternType {
     NIGHT_LOW,
     CRITICAL_HIGH,
     CRITICAL_LOW,
+    /** Нет выраженных паттернов при достаточной истории — информационная рекомендация. */
+    NO_SIGNIFICANT_PATTERNS,
 }
 
 enum class EventType {

@@ -92,6 +92,12 @@ class DashboardViewModelTest {
         override suspend fun insertEntry(entry: CgmRecord) {
             this.entries.value = this.entries.value + entry
         }
+        override suspend fun updateEntry(entry: CgmRecord) {
+            entries.value = entries.value.map { if (it.id == entry.id) entry else it }
+        }
+        override suspend fun deleteEntry(id: String) {
+            entries.value = entries.value.filter { it.id != id }
+        }
         override suspend fun replaceRecommendations(recommendations: List<Recommendation>) {
             this.recommendations.value = recommendations
         }

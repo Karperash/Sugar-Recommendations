@@ -13,6 +13,14 @@ class RecommendationEngineTest {
     private val engine = RecommendationEngine()
 
     @Test
+    fun emptyPatternsYieldsInformationalNoSignificantItem() {
+        val recommendations = engine.generate(emptyList(), UserSettings())
+        assertThat(recommendations).hasSize(1)
+        assertThat(recommendations.first().relatedDetectedPattern).isEqualTo(PatternType.NO_SIGNIFICANT_PATTERNS.name)
+        assertThat(recommendations.first().severity).isEqualTo(RecommendationSeverity.INFORMATIONAL)
+    }
+
+    @Test
     fun mapsCriticalLowToUrgentRecommendation() {
         val patterns = listOf(
             DetectedPattern(

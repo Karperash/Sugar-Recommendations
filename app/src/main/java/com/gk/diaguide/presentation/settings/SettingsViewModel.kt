@@ -11,6 +11,7 @@ import com.gk.diaguide.core.locale.AppLocaleManager
 import com.gk.diaguide.domain.model.GlucoseUnit
 import com.gk.diaguide.domain.model.RecommendationPresets
 import com.gk.diaguide.domain.model.UserSettings
+import com.gk.diaguide.domain.model.withGlucoseUnit
 import com.gk.diaguide.domain.repository.SettingsRepository
 import com.gk.diaguide.domain.usecase.SaveThresholdsUseCase
 import com.gk.diaguide.domain.usecase.SaveUserProfileUseCase
@@ -164,25 +165,6 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    /** Заполняет пороги под исследование на рядах OhioT1DM (мг/дл); сохранение — отдельно кнопкой «Сохранить». */
-    fun applyOhioResearchPreset() {
-        val p = RecommendationPresets.ohioT1DmResearchMgDl()
-        uiState = uiState.copy(
-            unit = p.glucoseUnit,
-            targetLow = p.targetLow.toString(),
-            targetHigh = p.targetHigh.toString(),
-            warningLow = p.warningLow.toString(),
-            warningHigh = p.warningHigh.toString(),
-            criticalLow = p.criticalLow.toString(),
-            criticalHigh = p.criticalHigh.toString(),
-            rapidRise = p.rapidRiseThresholdPer15Min.toString(),
-            rapidFall = p.rapidFallThresholdPer15Min.toString(),
-            prolongedMinutes = p.prolongedOutOfRangeMinutes.toString(),
-            patternWindowHours = p.patternWindowHours.toString(),
-            message = context.getString(R.string.settings_preset_ohio_applied),
-        )
-    }
-
     fun save() {
         viewModelScope.launch {
             saveUserProfileUseCase(
@@ -194,7 +176,8 @@ class SettingsViewModel @Inject constructor(
                 heightCm = uiState.heightCm.toDoubleOrNull(),
             )
             val current = settingsRepository.observeSettings().first()
-            val updated = current.copy(
+            val thresholdBase = if (uiState.unit != current.glucoseUnit) current.withGlucoseUnit(uiState.unit) else current
+            val updated = thresholdBase.copy(
                 displayName = uiState.displayName,
                 diabetesType = uiState.diabetesType,
                 ageGroup = uiState.ageGroup,
@@ -202,14 +185,14 @@ class SettingsViewModel @Inject constructor(
                 weightKg = uiState.weightKg.toDoubleOrNull() ?: current.weightKg,
                 heightCm = uiState.heightCm.toDoubleOrNull() ?: current.heightCm,
                 glucoseUnit = uiState.unit,
-                targetLow = uiState.targetLow.toDoubleOrNull() ?: current.targetLow,
-                targetHigh = uiState.targetHigh.toDoubleOrNull() ?: current.targetHigh,
-                warningLow = uiState.warningLow.toDoubleOrNull() ?: current.warningLow,
-                warningHigh = uiState.warningHigh.toDoubleOrNull() ?: current.warningHigh,
-                criticalLow = uiState.criticalLow.toDoubleOrNull() ?: current.criticalLow,
-                criticalHigh = uiState.criticalHigh.toDoubleOrNull() ?: current.criticalHigh,
-                rapidRiseThresholdPer15Min = uiState.rapidRise.toDoubleOrNull() ?: current.rapidRiseThresholdPer15Min,
-                rapidFallThresholdPer15Min = uiState.rapidFall.toDoubleOrNull() ?: current.rapidFallThresholdPer15Min,
+                targetLow = uiState.targetLow.toDoubleOrNull() ?: thresholdBase.targetLow,
+                targetHigh = uiState.targetHigh.toDoubleOrNull() ?: thresholdBase.targetHigh,
+                warningLow = uiState.warningLow.toDoubleOrNull() ?: thresholdBase.warningLow,
+                warningHigh = uiState.warningHigh.toDoubleOrNull() ?: thresholdBase.warningHigh,
+                criticalLow = uiState.criticalLow.toDoubleOrNull() ?: thresholdBase.criticalLow,
+                criticalHigh = uiState.criticalHigh.toDoubleOrNull() ?: thresholdBase.criticalHigh,
+                rapidRiseThresholdPer15Min = uiState.rapidRise.toDoubleOrNull() ?: thresholdBase.rapidRiseThresholdPer15Min,
+                rapidFallThresholdPer15Min = uiState.rapidFall.toDoubleOrNull() ?: thresholdBase.rapidFallThresholdPer15Min,
                 prolongedOutOfRangeMinutes = uiState.prolongedMinutes.toLongOrNull() ?: current.prolongedOutOfRangeMinutes,
                 patternWindowHours = uiState.patternWindowHours.toLongOrNull() ?: current.patternWindowHours,
                 reminderIntervalHours = uiState.reminderIntervalHours.toLongOrNull() ?: current.reminderIntervalHours,

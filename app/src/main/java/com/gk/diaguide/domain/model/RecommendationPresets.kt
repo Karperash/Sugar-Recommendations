@@ -24,22 +24,4 @@ object RecommendationPresets {
         prolongedOutOfRangeMinutes = 90L,
         patternWindowHours = 24L,
     )
-
-    /**
-     * Профиль под серии OhioT1DM (значения в мг/дл, интервал 5 мин).
-     * Применяется вручную в настройках как отправная точка для калибровки правил.
-     */
-    fun ohioT1DmResearchMgDl(): UserSettings = UserSettings(
-        glucoseUnit = GlucoseUnit.MG_DL,
-        targetLow = 70.0,
-        targetHigh = 180.0,
-        warningLow = 65.0,
-        warningHigh = 200.0,
-        criticalLow = 54.0,
-        criticalHigh = 300.0,
-        rapidRiseThresholdPer15Min = 30.0,
-        rapidFallThresholdPer15Min = 30.0,
-        prolongedOutOfRangeMinutes = 90L,
-        patternWindowHours = 24L,
-    )
 }

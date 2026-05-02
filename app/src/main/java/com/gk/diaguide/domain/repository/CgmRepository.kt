@@ -14,6 +14,8 @@ interface CgmRepository {
 
     suspend fun insertEntries(entries: List<CgmRecord>)
     suspend fun insertEntry(entry: CgmRecord)
+    suspend fun updateEntry(entry: CgmRecord)
+    suspend fun deleteEntry(id: String)
     suspend fun replaceRecommendations(recommendations: List<Recommendation>)
     suspend fun insertEvent(event: AppEvent)
     suspend fun clearAll()

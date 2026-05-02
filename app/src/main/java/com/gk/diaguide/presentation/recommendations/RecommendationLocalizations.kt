@@ -23,6 +23,7 @@ fun Recommendation.displayTitle(): String {
         PatternType.MORNING_HIGHS -> stringResource(R.string.reco_title_morning_highs)
         PatternType.POST_MEAL_SPIKE -> stringResource(R.string.reco_title_post_meal)
         PatternType.NIGHT_LOW -> stringResource(R.string.reco_title_night_low)
+        PatternType.NO_SIGNIFICANT_PATTERNS -> stringResource(R.string.reco_title_no_patterns)
         null -> title
     }
 }
@@ -41,6 +42,7 @@ fun Recommendation.displayExplanation(): String {
         PatternType.MORNING_HIGHS -> stringResource(R.string.reco_body_morning_highs)
         PatternType.POST_MEAL_SPIKE -> stringResource(R.string.reco_body_post_meal)
         PatternType.NIGHT_LOW -> stringResource(R.string.reco_body_night_low)
+        PatternType.NO_SIGNIFICANT_PATTERNS -> stringResource(R.string.reco_body_no_patterns)
         null -> shortExplanation
     }
 }

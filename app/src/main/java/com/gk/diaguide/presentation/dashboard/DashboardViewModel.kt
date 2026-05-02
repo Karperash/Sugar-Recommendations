@@ -6,6 +6,7 @@ import com.gk.diaguide.domain.model.CgmRecord
 import com.gk.diaguide.domain.model.DailySummary
 import com.gk.diaguide.domain.model.Recommendation
 import com.gk.diaguide.domain.model.UserSettings
+import com.gk.diaguide.domain.model.toUnit
 import com.gk.diaguide.domain.repository.CgmRepository
 import com.gk.diaguide.domain.repository.SettingsRepository
 import com.gk.diaguide.domain.usecase.RefreshInsightsUseCase
@@ -16,6 +17,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -29,7 +31,7 @@ data class DashboardUiState(
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    cgmRepository: CgmRepository,
+    private val cgmRepository: CgmRepository,
     settingsRepository: SettingsRepository,
     private val refreshInsightsUseCase: RefreshInsightsUseCase,
 ) : ViewModel() {
@@ -55,6 +57,13 @@ class DashboardViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
 
     init {
+        viewModelScope.launch {
+            cgmRepository.observeAllEntries()
+                .drop(1)
+                .collect {
+                    runCatching { refreshInsightsUseCase(today) }
+                }
+        }
         refresh()
     }
 
@@ -68,16 +77,17 @@ class DashboardViewModel @Inject constructor(
         if (entries.isEmpty()) {
             return DailySummary(today, 0.0, 0.0, 0.0, 0.0, 0, 0, 0)
         }
-        val inRange = entries.count { it.glucoseValue in settings.targetLow..settings.targetHigh }
+        val normalizedEntries = entries.map { it.toUnit(settings.glucoseUnit) }
+        val inRange = normalizedEntries.count { it.glucoseValue in settings.targetLow..settings.targetHigh }
         return DailySummary(
             date = today,
-            minimum = entries.minOf { it.glucoseValue },
-            maximum = entries.maxOf { it.glucoseValue },
-            average = entries.map { it.glucoseValue }.average(),
-            inRangePercent = inRange.toDouble() / entries.size.toDouble() * 100.0,
-            totalReadings = entries.size,
-            lowReadings = entries.count { it.glucoseValue < settings.targetLow },
-            highReadings = entries.count { it.glucoseValue > settings.targetHigh },
+            minimum = normalizedEntries.minOf { it.glucoseValue },
+            maximum = normalizedEntries.maxOf { it.glucoseValue },
+            average = normalizedEntries.map { it.glucoseValue }.average(),
+            inRangePercent = inRange.toDouble() / normalizedEntries.size.toDouble() * 100.0,
+            totalReadings = normalizedEntries.size,
+            lowReadings = normalizedEntries.count { it.glucoseValue < settings.targetLow },
+            highReadings = normalizedEntries.count { it.glucoseValue > settings.targetHigh },
         )
     }
 }

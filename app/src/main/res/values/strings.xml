@@ -55,7 +55,9 @@
     <string name="dashboard_import_file">Импорт файла</string>
     <string name="dashboard_open_chart">Открыть график</string>
     <string name="dashboard_recommendations">Рекомендации</string>
-    <string name="dashboard_event_log">Журнал событий</string>
+    <string name="nav_glucose_records">Записи глюкозы</string>
+    <string name="dashboard_event_log">@string/nav_glucose_records</string>
+    <string name="dashboard_chart_tap_hint">Нажмите на график, чтобы открыть полный график и выбрать период.</string>
     <string name="dashboard_disclaimer">Образовательный отказ: это приложение не диагностирует заболевания и не рассчитывает дозы инсулина. В экстренных ситуациях обращайтесь к врачу или в скорую помощь.</string>
     <string name="status_critical">Критический</string>
     <string name="status_out_of_range">Вне диапазона</string>
@@ -69,9 +71,11 @@
     <string name="chart_event_markers_title">Маркеры событий</string>
     <string name="chart_event_markers_blue">Синие маркеры обозначают записи с тегами: приём пищи, активность, инсулин или симптомы.</string>
     <string name="chart_event_markers_amber">Жёлтые маркеры — значения вне диапазона. Красные — критические пороги.</string>
-    <string name="chart_range_today">Сегодня</string>
-    <string name="chart_range_3days">3 дня</string>
+    <string name="chart_range_5days">5 дней</string>
     <string name="chart_range_7days">7 дней</string>
+    <string name="chart_range_14days">14 дней</string>
+    <string name="chart_range_21days">21 день</string>
+    <string name="chart_range_30days">30 дней</string>
     <string name="chart_range_subtitle">Выбранный интервал: %1$s</string>
     <string name="chart_point_tooltip">%1$s · %2$s</string>
 
@@ -102,6 +106,8 @@
     <!-- Рекомендации -->
     <string name="recommendations_title">Рекомендации</string>
     <string name="recommendations_empty">Рекомендации ещё не сформированы.</string>
+    <string name="recommendations_accuracy_hint">Минимум для формирования рекомендаций — 5 дней истории. Более точные рекомендации формируются от 14 дней наблюдений.</string>
+    <string name="recommendations_empty_refresh_hint">Если данные уже есть, зайдите на «Главную» и нажмите «Обновить», либо откройте этот экран снова — список подтянется после пересчёта.</string>
     <string name="recommendations_open_hospitals_map">Показать ближайшие больницы на карте</string>
     <string name="recommendations_hospitals_map_title">Ближайшие больницы (Яндекс Карты)</string>
     <string name="recommendations_close_map">Закрыть карту</string>
@@ -131,11 +137,26 @@
     <string name="reco_body_post_meal">После отмеченного приёма пищи — повышенные значения. Продолжайте отмечать приёмы пищи для анализа.</string>
     <string name="reco_title_night_low">Ночные снижения</string>
     <string name="reco_body_night_low">Ночью зафиксированы повторные низкие значения. Отслеживайте повторяемость и при необходимости обсудите с врачом.</string>
+    <string name="reco_title_no_patterns">Выраженных отклонений не найдено</string>
+    <string name="reco_body_no_patterns">По накопленной истории не выявлено устойчивых паттернов вне целевого диапазона. Продолжайте вести записи — при появлении повторяющихся ситуаций здесь появятся подсказки.</string>
 
     <!-- Журнал событий -->
-    <string name="events_title">Журнал событий</string>
-    <string name="events_empty">События пока не зафиксированы.</string>
+    <string name="events_title">@string/nav_glucose_records</string>
+    <string name="events_subtitle">Только ваши записи глюкозы (ручной ввод, импорт и тестовые сценарии).</string>
+    <string name="events_empty">Записей пока нет.</string>
     <string name="events_type">Тип: %1$s</string>
+    <string name="events_edit_title">Изменить запись</string>
+    <string name="events_save">Сохранить</string>
+    <string name="events_delete">Удалить</string>
+    <string name="events_cancel">Отмена</string>
+    <string name="events_timestamp_label">Дата и время (дд.мм.гггг чч:мм)</string>
+    <string name="events_delete_confirm">Удалить эту запись из журнала?</string>
+    <string name="events_error_timestamp">Неверный формат даты и времени.</string>
+    <string name="events_back_home_cd">На главную</string>
+    <string name="events_reset_data_cd">Сбросить все данные</string>
+    <string name="events_clear_all_title">Удалить все данные?</string>
+    <string name="events_clear_all_body">Будут удалены все записи глюкозы, рекомендации и журнал импорта. Настройки профиля и порогов останутся. Это действие нельзя отменить.</string>
+    <string name="events_clear_all_confirm">Удалить всё</string>
     <string name="event_type_note">Заметка</string>
     <string name="event_type_meal">Приём пищи</string>
     <string name="event_type_insulin">Инсулин</string>
@@ -208,8 +229,6 @@
     <string name="settings_reco_presets">Пресеты для рекомендаций</string>
     <string name="settings_preset_zenodo">Профиль Zenodo T1D-UOM (ммоль/л)</string>
     <string name="settings_preset_zenodo_applied">Поля заполнены под датасет T1D-UOM (Zenodo). Нажмите «Сохранить».</string>
-    <string name="settings_preset_ohio">Профиль OhioT1DM (исслед., мг/дл)</string>
-    <string name="settings_preset_ohio_applied">Поля заполнены профилем OhioT1DM. Нажмите «Сохранить».</string>
     <string name="settings_save">Сохранить настройки</string>
     <string name="settings_saved">Настройки сохранены.</string>
     <string name="settings_open_history">Открыть историю</string>

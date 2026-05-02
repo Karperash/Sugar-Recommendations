@@ -4,9 +4,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -35,11 +36,12 @@ import com.gk.diaguide.R
 import com.gk.diaguide.core.ui.Dimens
 import com.gk.diaguide.core.ui.SeverityChip
 import com.gk.diaguide.core.util.formatDateTime
+import com.gk.diaguide.domain.model.PatternType
 import com.gk.diaguide.domain.model.Recommendation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecommendationsScreen(recommendations: List<Recommendation>) {
+fun RecommendationsScreen(uiState: RecommendationsUiState) {
     var showMap by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
@@ -60,15 +62,33 @@ fun RecommendationsScreen(recommendations: List<Recommendation>) {
             modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.screenPadding),
             verticalArrangement = Arrangement.spacedBy(Dimens.itemSpacing),
         ) {
-            if (recommendations.isEmpty()) {
-                item { Text(stringResource(R.string.recommendations_empty)) }
+            if (uiState.recommendations.isEmpty()) {
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(Dimens.chipSpacing)) {
+                        Text(stringResource(R.string.recommendations_empty))
+                        Text(
+                            text = stringResource(R.string.recommendations_accuracy_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        if (uiState.historySufficient) {
+                            Text(
+                                text = stringResource(R.string.recommendations_empty_refresh_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
             }
-            items(recommendations) { recommendation ->
+            items(uiState.recommendations) { recommendation ->
                 Card {
                     Column(modifier = Modifier.padding(Dimens.cardPadding), verticalArrangement = Arrangement.spacedBy(Dimens.chipSpacing)) {
                         Text(recommendation.displayTitle(), style = MaterialTheme.typography.titleMedium)
                         Text(recommendation.displayExplanation())
-                        Text(stringResource(R.string.recommendations_pattern, recommendation.relatedDetectedPattern))
+                        if (!recommendation.relatedDetectedPattern.equals(PatternType.NO_SIGNIFICANT_PATTERNS.name, ignoreCase = true)) {
+                            Text(stringResource(R.string.recommendations_pattern, recommendation.relatedDetectedPattern))
+                        }
                         Text(recommendation.timestamp.formatDateTime(), style = MaterialTheme.typography.bodySmall)
                         SeverityChip(recommendation.severity)
                     }
@@ -98,7 +118,9 @@ fun RecommendationsScreen(recommendations: List<Recommendation>) {
                         style = MaterialTheme.typography.titleMedium,
                     )
                     AndroidView(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.85f),
                         factory = { context ->
                             WebView(context).apply {
                                 settings.javaScriptEnabled = true

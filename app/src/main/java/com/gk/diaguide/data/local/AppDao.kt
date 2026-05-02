@@ -23,6 +23,9 @@ interface CgmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(record: CgmRecordEntity)
 
+    @Query("DELETE FROM cgm_records WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Query("DELETE FROM cgm_records")
     suspend fun clearAll()
 }
@@ -46,4 +49,7 @@ interface EventDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(event: AppEventEntity)
+
+    @Query("DELETE FROM app_events")
+    suspend fun clearAll()
 }

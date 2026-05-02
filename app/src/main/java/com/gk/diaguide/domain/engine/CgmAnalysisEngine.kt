@@ -6,6 +6,7 @@ import com.gk.diaguide.domain.model.DetectedPattern
 import com.gk.diaguide.domain.model.PatternType
 import com.gk.diaguide.domain.model.RecommendationSeverity
 import com.gk.diaguide.domain.model.UserSettings
+import com.gk.diaguide.domain.model.toUnit
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -25,21 +26,28 @@ class CgmAnalysisEngine @Inject constructor() {
         settings: UserSettings,
         date: LocalDate,
         zoneId: ZoneId = ZoneId.systemDefault(),
+        includeAllRecordsForPatterns: Boolean = false,
     ): AnalysisResult {
         val effectiveSettings = settings.withProfileAdjustments()
-        val dayRecords = records
+        val normalizedRecords = records.map { it.toUnit(effectiveSettings.glucoseUnit) }
+        val dayRecords = normalizedRecords
             .filter { it.timestamp.atZone(zoneId).toLocalDate() == date }
             .sortedBy { it.timestamp }
+        val patternRecords = if (includeAllRecordsForPatterns) {
+            normalizedRecords.sortedBy { it.timestamp }
+        } else {
+            dayRecords
+        }
 
         val summary = buildSummary(dayRecords, effectiveSettings, date)
-        if (dayRecords.isEmpty()) {
+        if (patternRecords.isEmpty()) {
             return AnalysisResult(summary = summary, patterns = emptyList())
         }
 
         val patterns = mutableListOf<DetectedPattern>()
-        val now = dayRecords.last().timestamp
+        val now = patternRecords.last().timestamp
 
-        if (dayRecords.any { it.glucoseValue <= effectiveSettings.criticalLow }) {
+        if (patternRecords.any { it.glucoseValue <= effectiveSettings.criticalLow }) {
             patterns += pattern(
                 PatternType.CRITICAL_LOW,
                 "Detected critical low value",
@@ -49,7 +57,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue >= effectiveSettings.criticalHigh }) {
+        if (patternRecords.any { it.glucoseValue >= effectiveSettings.criticalHigh }) {
             patterns += pattern(
                 PatternType.CRITICAL_HIGH,
                 "Detected critical high value",
@@ -59,7 +67,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue < effectiveSettings.targetLow }) {
+        if (patternRecords.any { it.glucoseValue < effectiveSettings.targetLow }) {
             patterns += pattern(
                 PatternType.LOW_VALUE,
                 "Values below target range",
@@ -69,7 +77,7 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        if (dayRecords.any { it.glucoseValue > effectiveSettings.targetHigh }) {
+        if (patternRecords.any { it.glucoseValue > effectiveSettings.targetHigh }) {
             patterns += pattern(
                 PatternType.HIGH_VALUE,
                 "Values above target range",
@@ -79,12 +87,12 @@ class CgmAnalysisEngine @Inject constructor() {
             )
         }
 
-        patterns += detectRapidChanges(dayRecords, effectiveSettings)
-        patterns += detectProlongedOutOfRange(dayRecords, effectiveSettings)
-        patterns += detectRepeatedDeviations(dayRecords, effectiveSettings)
-        patterns += detectMorningHighs(dayRecords, effectiveSettings)
-        patterns += detectNightLows(dayRecords, effectiveSettings)
-        patterns += detectPostMealSpikes(dayRecords, effectiveSettings)
+        patterns += detectRapidChanges(patternRecords, effectiveSettings)
+        patterns += detectProlongedOutOfRange(patternRecords, effectiveSettings)
+        patterns += detectRepeatedDeviations(patternRecords, effectiveSettings)
+        patterns += detectMorningHighs(patternRecords, effectiveSettings)
+        patterns += detectNightLows(patternRecords, effectiveSettings)
+        patterns += detectPostMealSpikes(patternRecords, effectiveSettings)
 
         return AnalysisResult(summary = summary, patterns = patterns.distinctBy { it.type })
     }

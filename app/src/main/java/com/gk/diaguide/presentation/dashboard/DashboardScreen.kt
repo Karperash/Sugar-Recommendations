@@ -1,11 +1,13 @@
 package com.gk.diaguide.presentation.dashboard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,15 +15,25 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,17 +44,20 @@ import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Timeline
 import com.gk.diaguide.BuildConfig
 import com.gk.diaguide.R
-import com.gk.diaguide.core.ui.CgmLineChart
+import com.gk.diaguide.presentation.chart.GlucoseSeriesChart
 import com.gk.diaguide.core.ui.Dimens
 import com.gk.diaguide.core.ui.EmptyState
 import com.gk.diaguide.core.ui.SeverityChip
 import com.gk.diaguide.core.ui.StatusBadge
 import com.gk.diaguide.core.util.asArrow
 import com.gk.diaguide.core.util.formatGlucose
+import com.gk.diaguide.domain.model.toUnit
 import com.gk.diaguide.domain.model.UserSettings
 import com.gk.diaguide.presentation.recommendations.displayExplanation
 import com.gk.diaguide.presentation.recommendations.displayTitle
 import com.gk.diaguide.navigation.AppDestination
+import com.gk.diaguide.presentation.chart.ChartViewModel
+import com.gk.diaguide.presentation.chart.GlucoseChartPanel
 import com.gk.diaguide.ui.theme.Critical
 import com.gk.diaguide.ui.theme.Success
 import com.gk.diaguide.ui.theme.Warning
@@ -55,6 +70,10 @@ fun DashboardScreen(
     onNavigate: (AppDestination) -> Unit,
     onRefresh: () -> Unit,
 ) {
+    val chartViewModel: ChartViewModel = hiltViewModel()
+    val chartState by chartViewModel.state.collectAsStateWithLifecycle()
+    var showChartDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,21 +110,38 @@ fun DashboardScreen(
                     Text(stringResource(R.string.dashboard_current_glucose), style = MaterialTheme.typography.titleMedium)
                     val latest = state.latestEntry
                     if (latest != null) {
+                        val normalizedLatest = latest.toUnit(state.settings.glucoseUnit)
                         Row(horizontalArrangement = Arrangement.spacedBy(Dimens.itemSpacing)) {
                             Text(
-                                latest.glucoseValue.formatGlucose(state.settings.glucoseUnit),
+                                normalizedLatest.glucoseValue.formatGlucose(state.settings.glucoseUnit),
                                 style = MaterialTheme.typography.headlineMedium,
                             )
                             Text(latest.trendDirection.asArrow(), style = MaterialTheme.typography.headlineMedium)
                             StatusBadge(
-                                text = currentStatusText(latest.glucoseValue, state.settings),
-                                color = currentStatusColor(latest.glucoseValue, state.settings),
+                                text = currentStatusText(normalizedLatest.glucoseValue, state.settings),
+                                color = currentStatusColor(normalizedLatest.glucoseValue, state.settings),
                             )
                         }
-                        CgmLineChart(
-                            records = state.todayEntries.ifEmpty { listOf(latest) }.takeLast(12),
-                            settings = state.settings,
-                            modifier = Modifier.height(120.dp),
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .clickable { showChartDialog = true },
+                        ) {
+                            GlucoseSeriesChart(
+                                records = state.todayEntries
+                                    .ifEmpty { listOf(latest) }
+                                    .map { it.toUnit(state.settings.glucoseUnit) }
+                                    .takeLast(12),
+                                settings = state.settings,
+                                modifier = Modifier.fillMaxSize(),
+                                pointerEnabled = false,
+                            )
+                        }
+                        Text(
+                            text = stringResource(R.string.dashboard_chart_tap_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
                         EmptyState(
@@ -129,8 +165,18 @@ fun DashboardScreen(
                             contentDescription = null,
                         )
                     } else {
-                        Text(stringResource(R.string.dashboard_min, state.todaySummary.minimum.toString()))
-                        Text(stringResource(R.string.dashboard_max, state.todaySummary.maximum.toString()))
+                        Text(
+                            stringResource(
+                                R.string.dashboard_min,
+                                state.todaySummary.minimum.formatGlucose(state.settings.glucoseUnit),
+                            ),
+                        )
+                        Text(
+                            stringResource(
+                                R.string.dashboard_max,
+                                state.todaySummary.maximum.formatGlucose(state.settings.glucoseUnit),
+                            ),
+                        )
                         Text(stringResource(R.string.dashboard_average, "%.1f".format(state.todaySummary.average)))
                         Text(stringResource(R.string.dashboard_time_in_target, "%.1f".format(state.todaySummary.inRangePercent)))
                     }
@@ -162,7 +208,6 @@ fun DashboardScreen(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Dimens.chipSpacing), verticalArrangement = Arrangement.spacedBy(Dimens.chipSpacing)) {
                 Button(onClick = { onNavigate(AppDestination.ManualEntry) }) { Text(stringResource(R.string.dashboard_add_entry)) }
                 Button(onClick = { onNavigate(AppDestination.Import) }) { Text(stringResource(R.string.dashboard_import_file)) }
-                Button(onClick = { onNavigate(AppDestination.Chart) }) { Text(stringResource(R.string.dashboard_open_chart)) }
                 Button(onClick = { onNavigate(AppDestination.Recommendations) }) { Text(stringResource(R.string.dashboard_recommendations)) }
                 Button(onClick = { onNavigate(AppDestination.EventLog) }) { Text(stringResource(R.string.dashboard_event_log)) }
             }
@@ -202,6 +247,45 @@ fun DashboardScreen(
                     modifier = Modifier.size(36.dp),
                 ) {
                     Text("▼", style = MaterialTheme.typography.labelMedium)
+                }
+            }
+        }
+    }
+
+    if (showChartDialog) {
+        Dialog(
+            onDismissRequest = { showChartDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.chart_title),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        TextButton(onClick = { showChartDialog = false }) {
+                            Text(stringResource(R.string.events_cancel))
+                        }
+                    }
+                    GlucoseChartPanel(
+                        state = chartState,
+                        onRangeSelected = chartViewModel::setRange,
+                        chartHeightDp = 280,
+                    )
                 }
             }
         }

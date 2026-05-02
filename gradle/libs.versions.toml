@@ -19,6 +19,7 @@ espresso = "3.7.0"
 materialXml = "1.12.0"
 appcompat = "1.7.1"
 workRuntime = "2.10.1"
+coil = "2.7.0"
 
 [libraries]
 google-material = { module = "com.google.android.material:material", version.ref = "materialXml" }
@@ -47,6 +48,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntime" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }

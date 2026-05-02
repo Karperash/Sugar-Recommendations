@@ -37,6 +37,14 @@ class CgmRepositoryImpl @Inject constructor(
         database.cgmDao().insert(entry.toEntity())
     }
 
+    override suspend fun updateEntry(entry: CgmRecord) {
+        database.cgmDao().insert(entry.toEntity())
+    }
+
+    override suspend fun deleteEntry(id: String) {
+        database.cgmDao().deleteById(id)
+    }
+
     override suspend fun replaceRecommendations(recommendations: List<Recommendation>) {
         database.recommendationDao().clearAll()
         database.recommendationDao().insertAll(recommendations.map { it.toEntity() })
@@ -49,5 +57,6 @@ class CgmRepositoryImpl @Inject constructor(
     override suspend fun clearAll() {
         database.recommendationDao().clearAll()
         database.cgmDao().clearAll()
+        database.eventDao().clearAll()
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gk.diaguide.domain.model.CgmRecord
 import com.gk.diaguide.domain.model.UserSettings
+import com.gk.diaguide.domain.model.toUnit
 import com.gk.diaguide.domain.repository.CgmRepository
 import com.gk.diaguide.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,14 +18,16 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
 enum class ChartRange(val days: Long) {
-    TODAY(1),
-    THREE_DAYS(3),
+    FIVE_DAYS(5),
     SEVEN_DAYS(7),
+    FOURTEEN_DAYS(14),
+    TWENTY_ONE_DAYS(21),
+    THIRTY_DAYS(30),
 }
 
 data class ChartUiState(
     val settings: UserSettings = UserSettings(),
-    val selectedRange: ChartRange = ChartRange.TODAY,
+    val selectedRange: ChartRange = ChartRange.FIVE_DAYS,
     val records: List<CgmRecord> = emptyList(),
 )
 
@@ -34,7 +37,7 @@ class ChartViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val selectedRange = MutableStateFlow(ChartRange.TODAY)
+    private val selectedRange = MutableStateFlow(ChartRange.FIVE_DAYS)
     private val zoneId = ZoneId.systemDefault()
 
     val state = combine(
@@ -50,10 +53,11 @@ class ChartViewModel @Inject constructor(
                 MutableStateFlow(settings),
                 MutableStateFlow(range),
             ) { records, localSettings, localRange ->
+                val normalizedRecords = records.map { it.toUnit(localSettings.glucoseUnit) }
                 ChartUiState(
                     settings = localSettings,
                     selectedRange = localRange,
-                    records = records,
+                    records = normalizedRecords,
                 )
             }
         }

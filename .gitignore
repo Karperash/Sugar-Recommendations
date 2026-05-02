@@ -51,3 +51,6 @@ data/ohio/raw/*
 # Zenodo (T1D-UOM и др.) — не коммитить распакованные CSV
 data/zenodo/raw/*
 !data/zenodo/raw/.gitkeep
+
+# Дипломная работа и материалы ВКР — не коммитить в репозиторий
+Дипломная/

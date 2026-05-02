@@ -41,7 +41,6 @@ fun SettingsScreen(
     onSave: () -> Unit,
     onNavigate: (AppDestination) -> Unit,
     onApplyZenodoPreset: () -> Unit,
-    onApplyOhioPreset: () -> Unit,
 ) {
     if (!settingsIntroCompleted) {
         Box(Modifier.fillMaxSize()) {
@@ -97,7 +96,11 @@ fun SettingsScreen(
                 GlucoseUnit.entries.forEach { unit ->
                     FilterChip(
                         selected = unit == state.unit,
-                        onClick = { onUpdate { it.copy(unit = unit) } },
+                        onClick = {
+                            onUpdate { s ->
+                                if (unit == s.unit) s else s.convertGlucoseThresholdStringsToUnit(unit)
+                            }
+                        },
                         label = { Text(unit.shortLabelRu()) },
                     )
                 }
@@ -106,9 +109,6 @@ fun SettingsScreen(
             Text(stringResource(R.string.settings_reco_presets), style = MaterialTheme.typography.titleMedium)
             OutlinedButton(onClick = onApplyZenodoPreset) {
                 Text(stringResource(R.string.settings_preset_zenodo))
-            }
-            OutlinedButton(onClick = onApplyOhioPreset) {
-                Text(stringResource(R.string.settings_preset_ohio))
             }
 
             SettingField(stringResource(R.string.threshold_target_low), state.targetLow) { value -> onUpdate { it.copy(targetLow = value) } }

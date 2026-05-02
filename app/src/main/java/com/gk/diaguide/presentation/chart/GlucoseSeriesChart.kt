@@ -1,4 +1,4 @@
-package com.gk.diaguide.core.ui
+package com.gk.diaguide.presentation.chart
 
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -24,9 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -38,6 +36,7 @@ import com.gk.diaguide.R
 import com.gk.diaguide.core.util.formatDateTime
 import com.gk.diaguide.core.util.formatGlucose
 import com.gk.diaguide.domain.model.CgmRecord
+import com.gk.diaguide.domain.model.GlucoseUnit
 import com.gk.diaguide.domain.model.UserSettings
 import com.gk.diaguide.ui.theme.Critical
 import com.gk.diaguide.ui.theme.Info
@@ -46,68 +45,104 @@ import com.gk.diaguide.ui.theme.Success
 import com.gk.diaguide.ui.theme.Warning
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+/**
+ * Линейный график глюкозы по времени: шкала Y от реальных значений с полями,
+ * подписи осей в единицах настроек, без «ломаной» смеси диапазонов.
+ */
 @Composable
-fun CgmLineChart(
+fun GlucoseSeriesChart(
     records: List<CgmRecord>,
     settings: UserSettings,
     modifier: Modifier = Modifier,
+    /** Если false — не перехватывать касания (например мини-график на главной под `clickable`). */
+    pointerEnabled: Boolean = true,
 ) {
-    var selectedIndex by remember(records) { mutableIntStateOf(-1) }
-    LaunchedEffect(records) {
+    val sorted = remember(records) { records.sortedBy { it.timestamp } }
+    var selectedIndex by remember(sorted) { mutableIntStateOf(-1) }
+    LaunchedEffect(sorted) {
         selectedIndex = -1
     }
+
     val density = LocalDensity.current
-    val paddingLeftPx = with(density) { 52.dp.toPx() }
+    val paddingLeftPx = with(density) { 56.dp.toPx() }
     val paddingRightPx = with(density) { 12.dp.toPx() }
     val lineColor = MaterialTheme.colorScheme.primary
     val axisLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Box(modifier = modifier.fillMaxWidth()) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(records) {
-                    if (records.isEmpty()) return@pointerInput
+        val canvasModifier = Modifier.fillMaxSize().then(
+            if (pointerEnabled) {
+                Modifier.pointerInput(sorted) {
+                    if (sorted.isEmpty()) return@pointerInput
                     detectTapGestures { tap ->
                         val chartWidthPx = size.width - paddingLeftPx - paddingRightPx
                         if (tap.x < paddingLeftPx || tap.x > paddingLeftPx + chartWidthPx) {
                             selectedIndex = -1
                             return@detectTapGestures
                         }
+                        val tStart = sorted.first().timestamp.toEpochMilli()
+                        val tEnd = sorted.last().timestamp.toEpochMilli()
                         val rel = ((tap.x - paddingLeftPx) / chartWidthPx).toDouble().coerceIn(0.0, 1.0)
-                        val idx = if (records.size == 1) {
+                        val nearest = if (sorted.size == 1) {
                             0
                         } else {
-                            (rel * records.lastIndex).roundToInt().coerceIn(0, records.lastIndex)
+                            val targetEpoch = tStart + (rel * (tEnd - tStart).toDouble()).toLong()
+                            sorted.indices.minByOrNull { idx ->
+                                abs(sorted[idx].timestamp.toEpochMilli() - targetEpoch)
+                            } ?: 0
                         }
-                        selectedIndex = if (selectedIndex == idx) -1 else idx
+                        selectedIndex = if (selectedIndex == nearest) -1 else nearest
                     }
-                },
-        ) {
-            if (records.isEmpty()) return@Canvas
+                }
+            } else {
+                Modifier
+            },
+        )
+        Canvas(modifier = canvasModifier) {
+            if (sorted.isEmpty()) return@Canvas
 
-            val paddingBottom = 28.dp.toPx()
-            val paddingTop = 8.dp.toPx()
+            val paddingBottom = 32.dp.toPx()
+            val paddingTop = 10.dp.toPx()
             val paddingRightLocal = 12.dp.toPx()
-
             val chartWidth = size.width - paddingLeftPx - paddingRightLocal
             val chartHeight = size.height - paddingTop - paddingBottom
 
-            val minValue = minOf(records.minOf { it.glucoseValue }, settings.criticalLow) - 10
-            val maxValue = maxOf(records.maxOf { it.glucoseValue }, settings.criticalHigh) + 10
-
-            fun mapY(value: Double): Float {
-                val normalized = ((value - minValue) / (maxValue - minValue)).toFloat().coerceIn(0f, 1f)
-                return paddingTop + chartHeight - (normalized * chartHeight)
+            val values = sorted.map { it.glucoseValue }
+            val vMin = values.minOrNull()!!
+            val vMax = values.maxOrNull()!!
+            val minSpan = if (settings.glucoseUnit == GlucoseUnit.MG_DL) 18.0 else 1.0
+            val spanRaw = (vMax - vMin).coerceAtLeast(minSpan)
+            val pad = spanRaw * 0.12
+            var yMin = vMin - pad
+            var yMax = vMax + pad
+            if (yMax - yMin < minSpan) {
+                val mid = (vMin + vMax) / 2.0
+                yMin = mid - minSpan / 2.0
+                yMax = mid + minSpan / 2.0
             }
 
-            fun mapX(index: Int): Float {
-                return if (records.size == 1) paddingLeftPx + chartWidth / 2
-                else paddingLeftPx + chartWidth * index / records.lastIndex.toFloat()
+            fun mapY(value: Double): Float {
+                val t = ((value - yMin) / (yMax - yMin)).toFloat().coerceIn(0f, 1f)
+                return paddingTop + chartHeight - t * chartHeight
+            }
+
+            val tStart = sorted.first().timestamp.toEpochMilli()
+            val tEnd = sorted.last().timestamp.toEpochMilli()
+            fun mapX(record: CgmRecord): Float {
+                val epochMs = record.timestamp.toEpochMilli()
+                return if (tEnd == tStart) {
+                    paddingLeftPx + chartWidth / 2f
+                } else {
+                    val r = (epochMs - tStart).toDouble() / (tEnd - tStart).toDouble()
+                    paddingLeftPx + chartWidth * r.toFloat().coerceIn(0f, 1f)
+                }
             }
 
             val labelPaint = Paint().apply {
@@ -117,50 +152,52 @@ fun CgmLineChart(
                 typeface = Typeface.DEFAULT
             }
 
-            val dashEffect = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 6.dp.toPx()))
-
-            drawColoredZones(settings, minValue, maxValue, paddingLeftPx, paddingTop, chartWidth, chartHeight, ::mapY)
+            // Целевой коридор (только если пересекается с видимым диапазоном)
+            val tgtLowVis = max(yMin, settings.targetLow)
+            val tgtHighVis = min(yMax, settings.targetHigh)
+            if (tgtLowVis < tgtHighVis) {
+                drawRect(
+                    color = Success.copy(alpha = 0.12f),
+                    topLeft = Offset(paddingLeftPx, mapY(tgtHighVis)),
+                    size = Size(chartWidth, mapY(tgtLowVis) - mapY(tgtHighVis)),
+                )
+            }
 
             val thresholds = listOf(
                 settings.criticalLow,
                 settings.targetLow,
                 settings.targetHigh,
                 settings.criticalHigh,
-            ).filter { it in minValue..maxValue }
+            ).filter { it in yMin..yMax }
 
             thresholds.forEach { value ->
                 val y = mapY(value)
                 drawLine(
-                    color = Color.Gray.copy(alpha = 0.3f),
+                    color = Color.Gray.copy(alpha = 0.35f),
                     start = Offset(paddingLeftPx, y),
                     end = Offset(paddingLeftPx + chartWidth, y),
                     strokeWidth = 1.dp.toPx(),
-                    pathEffect = dashEffect,
                 )
                 drawContext.canvas.nativeCanvas.drawText(
-                    "%.0f".format(value),
+                    formatAxisTick(value, settings.glucoseUnit),
                     paddingLeftPx - 6.dp.toPx(),
                     y + 4.dp.toPx(),
                     Paint(labelPaint).apply { textAlign = Paint.Align.RIGHT },
                 )
             }
 
-            val points = records.mapIndexed { index, _ ->
-                Offset(mapX(index), mapY(records[index].glucoseValue))
-            }
-
+            val points = sorted.map { r -> Offset(mapX(r), mapY(r.glucoseValue)) }
             val linePath = Path().apply {
                 moveTo(points.first().x, points.first().y)
-                points.drop(1).forEach { point -> lineTo(point.x, point.y) }
+                points.drop(1).forEach { lineTo(it.x, it.y) }
             }
-
             drawPath(
                 path = linePath,
                 color = lineColor,
-                style = Stroke(width = 5f, cap = StrokeCap.Round),
+                style = Stroke(width = 4f, cap = StrokeCap.Round),
             )
 
-            records.zip(points).forEachIndexed { index, (record, point) ->
+            sorted.zip(points).forEachIndexed { index, (record, point) ->
                 val markerColor = when {
                     index == selectedIndex -> lineColor
                     record.glucoseValue <= settings.criticalLow || record.glucoseValue >= settings.criticalHigh -> Critical
@@ -168,24 +205,16 @@ fun CgmLineChart(
                     record.meal || record.activity || record.insulin || record.symptom -> Info
                     else -> Primary
                 }
-                val radius = if (index == selectedIndex) 9.dp.toPx() else 6.dp.toPx()
+                val radius = if (index == selectedIndex) 8.dp.toPx() else 5.dp.toPx()
                 drawCircle(color = markerColor, radius = radius, center = point)
             }
 
             val zone = ZoneId.systemDefault()
-            val step = maxOf(1, records.size / 5)
-            records.forEachIndexed { index, record ->
-                if (index % step == 0 || index == records.lastIndex) {
-                    val x = mapX(index)
+            val step = max(1, sorted.size / 5)
+            sorted.forEachIndexed { index, record ->
+                if (index % step == 0 || index == sorted.lastIndex) {
+                    val x = mapX(record)
                     val label = record.timestamp.atZone(zone).format(timeFormatter)
-
-                    drawLine(
-                        color = Color.Gray.copy(alpha = 0.3f),
-                        start = Offset(x, paddingTop + chartHeight),
-                        end = Offset(x, paddingTop + chartHeight + 4.dp.toPx()),
-                        strokeWidth = 1.dp.toPx(),
-                    )
-
                     drawContext.canvas.nativeCanvas.drawText(
                         label,
                         x,
@@ -196,25 +225,25 @@ fun CgmLineChart(
             }
 
             drawLine(
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = Color.Gray.copy(alpha = 0.55f),
                 start = Offset(paddingLeftPx, paddingTop),
                 end = Offset(paddingLeftPx, paddingTop + chartHeight),
                 strokeWidth = 1.dp.toPx(),
             )
             drawLine(
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = Color.Gray.copy(alpha = 0.55f),
                 start = Offset(paddingLeftPx, paddingTop + chartHeight),
                 end = Offset(paddingLeftPx + chartWidth, paddingTop + chartHeight),
                 strokeWidth = 1.dp.toPx(),
             )
         }
 
-        if (selectedIndex in records.indices) {
-            val r = records[selectedIndex]
+        if (selectedIndex in sorted.indices) {
+            val r = sorted[selectedIndex]
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(horizontal = 8.dp, vertical = 32.dp)
+                    .padding(horizontal = 8.dp, vertical = 28.dp)
                     .fillMaxWidth(0.94f),
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(8.dp),
@@ -234,33 +263,5 @@ fun CgmLineChart(
     }
 }
 
-private fun DrawScope.drawColoredZones(
-    settings: UserSettings,
-    minValue: Double,
-    maxValue: Double,
-    paddingLeft: Float,
-    paddingTop: Float,
-    chartWidth: Float,
-    chartHeight: Float,
-    mapY: (Double) -> Float,
-) {
-    fun zoneRect(top: Double, bottom: Double, color: Color) {
-        val clampedTop = top.coerceIn(minValue, maxValue)
-        val clampedBottom = bottom.coerceIn(minValue, maxValue)
-        val yTop = mapY(clampedTop)
-        val yBottom = mapY(clampedBottom)
-        if (yBottom > yTop) {
-            drawRect(
-                color = color,
-                topLeft = Offset(paddingLeft, yTop),
-                size = Size(chartWidth, yBottom - yTop),
-            )
-        }
-    }
-
-    zoneRect(maxValue, settings.criticalHigh, Critical.copy(alpha = 0.06f))
-    zoneRect(settings.criticalHigh, settings.targetHigh, Warning.copy(alpha = 0.06f))
-    zoneRect(settings.targetHigh, settings.targetLow, Success.copy(alpha = 0.10f))
-    zoneRect(settings.targetLow, settings.criticalLow, Warning.copy(alpha = 0.06f))
-    zoneRect(settings.criticalLow, minValue, Critical.copy(alpha = 0.06f))
-}
+private fun formatAxisTick(value: Double, unit: GlucoseUnit): String =
+    if (unit == GlucoseUnit.MG_DL) "%.0f".format(Locale.US, value) else "%.1f".format(Locale.US, value)

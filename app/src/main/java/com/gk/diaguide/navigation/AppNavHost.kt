@@ -20,8 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.gk.diaguide.core.ui.AppBottomBar
 import com.gk.diaguide.presentation.about.AboutScreen
-import com.gk.diaguide.presentation.chart.ChartScreen
-import com.gk.diaguide.presentation.chart.ChartViewModel
 import com.gk.diaguide.presentation.dashboard.DashboardScreen
 import com.gk.diaguide.presentation.dashboard.DashboardViewModel
 import com.gk.diaguide.presentation.events.EventLogScreen
@@ -47,7 +45,6 @@ fun AppNavHost() {
     val currentRoute = currentEntry?.destination?.route
     val destination = listOf(
         AppDestination.Dashboard,
-        AppDestination.Chart,
         AppDestination.Nutrition,
         AppDestination.History,
         AppDestination.Recommendations,
@@ -99,12 +96,6 @@ fun AppNavHost() {
                 )
             }
 
-            composable(AppDestination.Chart.route) {
-                val viewModel: ChartViewModel = hiltViewModel()
-                val state by viewModel.state.collectAsStateWithLifecycle()
-                ChartScreen(state = state, onRangeSelected = viewModel::setRange)
-            }
-
             composable(AppDestination.Nutrition.route) {
                 NutritionScreen()
             }
@@ -117,8 +108,8 @@ fun AppNavHost() {
 
             composable(AppDestination.Recommendations.route) {
                 val viewModel: RecommendationsViewModel = hiltViewModel()
-                val recommendations by viewModel.recommendations.collectAsStateWithLifecycle()
-                RecommendationsScreen(recommendations)
+                val recoState by viewModel.state.collectAsStateWithLifecycle()
+                RecommendationsScreen(recoState)
             }
 
             composable(
@@ -129,8 +120,19 @@ fun AppNavHost() {
                 popExitTransition = { slideOutHorizontally { it } },
             ) {
                 val viewModel: EventLogViewModel = hiltViewModel()
-                val events by viewModel.events.collectAsStateWithLifecycle()
-                EventLogScreen(events)
+                val eventState by viewModel.uiState.collectAsStateWithLifecycle()
+                EventLogScreen(
+                    state = eventState,
+                    onUpdateEntry = viewModel::updateEntry,
+                    onDeleteEntry = viewModel::deleteEntry,
+                    onNavigateHome = {
+                        navController.navigate(AppDestination.Dashboard.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onClearAllData = viewModel::clearAllData,
+                )
             }
 
             composable(
@@ -181,7 +183,6 @@ fun AppNavHost() {
                     onSave = viewModel::save,
                     onNavigate = { navController.navigate(it.route) },
                     onApplyZenodoPreset = viewModel::applyZenodoT1dUomPreset,
-                    onApplyOhioPreset = viewModel::applyOhioResearchPreset,
                 )
             }
 
